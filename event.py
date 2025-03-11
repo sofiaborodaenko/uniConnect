@@ -22,7 +22,7 @@ class EventTree:
     _root = Optional[Any]
     _subtrees = list[EventTree]
 
-    def __init__(self, root: Optional[Any], subtrees = list[EventTree]) -> None:
+    def __init__(self, root: Optional[Any], subtrees: list[EventTree]) -> None:
         """ Initialize an EventTree with given root and subtrees
         """
 
