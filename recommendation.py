@@ -1,6 +1,6 @@
 # todo:
 # 1. a function to get the user info: college, major, preferred_categories, clicked_events
-# 2. 
+# 2. a function to record the events user clicked.
 
 # # Example user profile
 # user_profile = {
