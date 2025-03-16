@@ -90,6 +90,8 @@ def compute_score(event, user_profile):
         score += 0.5
     if 'major' in user_profile and event.get('related_major') == user_profile['major']:
         score += 0.5
+    if 'clicked_categories' in user_profile and event.get('category') in user_profile['clicked_categories']:
+        score += 0.5
     return score
 
 def recommend_events(user_profile, events_tree, top_n=5):
