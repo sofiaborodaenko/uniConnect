@@ -10,14 +10,14 @@ import time
 # List of websites to scrape
 websites = {
     "UTSU": "https://www.utsu.ca/sc-programming/",
-    "Folio_Activities": "https://folio.utoronto.ca/students/activities?endorsementIds=4623183&page=1&studentSiteId=1",
-    "Folio_Events": "https://folio.utoronto.ca/students/events",
-    "ASSU": "https://assu.ca/wp/get-involved/",
-    "Vic": "https://www.vusac.ca/events",
+    # "Folio_Activities": "https://folio.utoronto.ca/students/activities?endorsementIds=4623183&page=1&studentSiteId=1",
+    # "Folio_Events": "https://folio.utoronto.ca/students/events",
+    # "ASSU": "https://assu.ca/wp/get-involved/",
+    # "Vic": "https://www.vusac.ca/events",
     "UC": "https://www.uc.utoronto.ca/about-uc-connect-us-events",
-    "Trinity": "https://www.trinity.utoronto.ca/discover/calendar/",
-    "Innis": "https://innis.utoronto.ca/happening-at-innis/",
-    "Woodsworth": "https://www.mywcsa.com/current-events-instagram"
+    # "Trinity": "https://www.trinity.utoronto.ca/discover/calendar/",
+    # "Innis": "https://innis.utoronto.ca/happening-at-innis/",
+    # "Woodsworth": "https://www.mywcsa.com/current-events-instagram"
 }
 
 # Set up Selenium WebDriver
@@ -30,16 +30,17 @@ all_events = []
 
 # Function to scrape list-based events
 def scrape_list_events(soup, source):
-    events = soup.find_all(['div', 'li', 'article'], class_=['event', 'event-item', 'post', 'calendar-event'])
+    events = soup.find_all(['div', 'li', 'article'], class_=['event', 'event-item', 'post', 'calendar-event', 'o-listing__list-item'])
     scraped_events = []
     for event in events:
-        title_tag = event.find(['h2', 'h3', 'p', 'span'], class_=['title', 'event-title'])
-        title = title_tag.text.strip() if title_tag else "No title"
+        title_tag = event.find(['h2', 'h3', 'p', 'span', 'div'], class_=['title', 'event-title', 'm-calendar-item__title'])
+        title = title_tag.text.strip().replace("\n", "")
 
-        date_tag = event.find(['time', 'span', 'p'], class_=['date', 'event-date'])
-        date = date_tag.text.strip() if date_tag else "No date"
+        month_tag = event.find(['time', 'span', 'p'], class_=['date', 'event-date', 'a-date--calendar__month'])
+        day_tag = event.find(['time', 'span', 'p'], class_=['date', 'event-date', 'a-date--calendar__day'])
+        date = f"{month_tag.text.strip()} {day_tag.text.strip()}" if month_tag else "No date"
 
-        desc_tag = event.find('p', class_=['description', 'event-details', 'summary'])
+        desc_tag = event.find(['p', 'div'], class_=['description', 'event-details', 'summary', 'm-calendar-item__message'])
         description = desc_tag.text.strip() if desc_tag else "No description"
 
         scraped_events.append({
