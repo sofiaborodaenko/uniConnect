@@ -82,6 +82,7 @@ def get_all_events(tree):
     return events
 
 def compute_score(event, user_profile):
+    # idk is this enough? or we need a more complicated algo to calculate the score?
     score = 0
     if event.get('college') == user_profile['college']:
         score += 1.0
