@@ -8,6 +8,9 @@ def index():
     """
     Renders the main page html
     """
+    if request.method == 'POST':
+        request.form.getlist('my-checkbox')
+
     return render_template('index.html')
 
 

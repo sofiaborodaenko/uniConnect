@@ -1,0 +1,104 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+
+}
+
+.header {
+    width: 100vw;
+    height: 6.25rem;
+    display: block;
+    background-color: rgb(0, 39, 130);
+    position: fixed;
+    z-index: 1000;
+    align-items: flex-start;
+
+
+}
+
+.logo_container img {
+    width: 100px;
+    height: auto;
+    border-radius: 50%;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    display: table-cell;
+    vertical-align: top;
+
+}
+
+.logo_container {
+    height: 100%;
+    display: table;
+    float: left;
+    margin-left: 15.6rem;
+
+}
+
+.logo_container h1 {
+    color: white;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 3.25rem;
+    font-weight: 200;
+}
+
+.logo_container h1 span {
+    font-weight: 800;
+
+}
+
+.side-bar {
+    background: rgb(0, 57, 189);
+    opacity: 0.8;
+    width: 15.6rem;
+    height: calc(100vh - 6.25rem);
+    position: fixed;
+    top: 6.25rem;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+}
+
+.menu {
+    width: 100%;
+    margin-top: 1.9rem;
+
+}
+
+.item .sub-menu {
+    background: rgb(85, 156, 242);
+
+}
+
+.menu .item {
+    position: relative;
+    cursor: pointer;
+
+}
+
+.menu .item a {
+    color: white;
+    font-size: 1.25rem;
+    text-decoration: none;
+    display: block;
+    padding: 0.3rem 1.9rem;
+    line-height: 3.75rem;
+}
+
+.sub-menu li {
+    list-style-type: none;
+    padding: 0.3rem 1.9rem;
+    line-height: 3.75rem;
+
+}
