@@ -8,11 +8,29 @@ def index():
     """
     Renders the main page html
     """
-    if request.method == 'POST':
-        request.form.getlist('my-checkbox')
 
     return render_template('index.html')
 
+
+@app.route("/update_selection", methods=["POST"])
+def update_selection():
+    """
+    As of now, prints the checkboxes that are clicked by the user
+    """
+    data = request.get_json()
+    categories = data.get("categories", [])
+    days = data.get("days", [])
+    colleges = data.get("colleges", [])
+
+    print("selected categories:", categories)
+    print("selected days:", days)
+    print("selected colleges:", colleges)
+
+    return jsonify({
+        "categories": categories,
+        "days": days,
+        "colleges": colleges
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

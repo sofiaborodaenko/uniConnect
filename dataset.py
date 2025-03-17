@@ -9,14 +9,14 @@ import time
 
 # List of websites to scrape
 websites = {
-    "UTSU": "https://www.utsu.ca/sc-programming/",
-    "Folio_Activities": "https://folio.utoronto.ca/students/activities?endorsementIds=4623183&page=1&studentSiteId=1",
-    "Folio_Events": "https://folio.utoronto.ca/students/events",
-    "ASSU": "https://assu.ca/wp/get-involved/",
+    # "UTSU": "https://www.utsu.ca/sc-programming/",
+    # "Folio_Activities": "https://folio.utoronto.ca/students/activities?endorsementIds=4623183&page=1&studentSiteId=1",
+    # "Folio_Events": "https://folio.utoronto.ca/students/events",
+    # "ASSU": "https://assu.ca/wp/get-involved/",
     "Vic": "https://www.vusac.ca/events",
     "UC": "https://www.uc.utoronto.ca/about-uc-connect-us-events",
-    "Trinity": "https://www.trinity.utoronto.ca/discover/calendar/",
-    "Innis": "https://innis.utoronto.ca/happening-at-innis/",
+    # "Trinity": "https://www.trinity.utoronto.ca/discover/calendar/",
+    #"Innis": "https://innis.utoronto.ca/happening-at-innis/",
     "Woodsworth": "https://www.mywcsa.com/current-events-instagram"
 }
 
