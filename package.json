@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "start": "node ./bin/www",
+    "run": "nodemon ./bin/www",
+    "buildcss": "npx @tailwindcss/cli -i ./static/styles/style.css -o ./static/output.css --watch",
+    "deploy": "gh-pages -d public"
+  },
+  "repository": {
+    "url": "git+https://github.com/Patbob123/uniConnect.git"
+  },
+  "dependencies": {
+    "nodemon": "^3.1.9",
+    "tailwindcss": "^4.0.14"
+  },
+  "name": "uniconnect",
+  "version": "1.0.0",
+  "description": "Service for U of T students who are looking for events",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Patbob123/uniConnect/issues"
+  },
+  "homepage": "https://github.com/Patbob123/uniConnect#readme"
+}
