@@ -28,15 +28,15 @@
                 <div class="item"><a class="sub-btn">Categories</a>
                     <div class="sub-menu">
                         <form method="POST" action="/">
-                            <li>Free Food <input type="checkbox" value="1" name="my-checkbox"></li>
-                            <li>Social  <input type="checkbox" value="2" name="my-checkbox"></li>
-                            <li>Sports  <input type="checkbox" value="3" name="my-checkbox"></li>
-                            <li>Academic  <input type="checkbox" value="4" name="my-checkbox"></li>
-                            <li>Career  <input type="checkbox" value="5" name="my-checkbox"></li>
-                            <li>Financial Help  <input type="checkbox" value="6" name="my-checkbox"></li>
-                            <li>Mental Health  <input type="checkbox" value="7" name="my-checkbox"></li>
-                            <li>Health  <input type="checkbox" value="8" name="my-checkbox"></li>
-                            <li>Outdoor Adventure  <input type="checkbox" value="9" name="my-checkbox"></li>
+                            <li>Free Food <input type="checkbox" value="Free Food" name="category-checkbox"></li>
+                            <li>Social  <input type="checkbox" value="Social" name="category-checkbox"></li>
+                            <li>Sports  <input type="checkbox" value="Sports" name="category-checkbox"></li>
+                            <li>Academic  <input type="checkbox" value="Academic" name="category-checkbox"></li>
+                            <li>Career  <input type="checkbox" value="Career" name="category-checkbox"></li>
+                            <li>Financial Help  <input type="checkbox" value="Financial Help" name="category-checkbox"></li>
+                            <li>Mental Health  <input type="checkbox" value="Mental Health" name="category-checkbox"></li>
+                            <li>Health  <input type="checkbox" value="Health" name="category-checkbox"></li>
+                            <li>Outdoor Adventure  <input type="checkbox" value="Outdoor Adventure" name="category-checkbox"></li>
 
                         </form>
 
@@ -46,13 +46,13 @@
                 <div class="item"><a class="sub-btn">Days of the Week</a>
                     <div class="sub-menu">
                         <form method="POST" action="/">
-                            <li>Monday <input type="checkbox" value="10" name="my-checkbox"></li>
-                            <li>Tuesday  <input type="checkbox" value="11" name="my-checkbox"></li>
-                            <li>Wednesday  <input type="checkbox" value="12" name="my-checkbox"></li>
-                            <li>Thrusday  <input type="checkbox" value="13" name="my-checkbox"></li>
-                            <li>Friday  <input type="checkbox" value="14" name="my-checkbox"></li>
-                            <li>Saturday  <input type="checkbox" value="15" name="my-checkbox"></li>
-                            <li>Sunday  <input type="checkbox" value="16" name="my-checkbox"></li>
+                            <li>Monday <input type="checkbox" value="Monday" name="week-checkbox"></li>
+                            <li>Tuesday  <input type="checkbox" value="Tuesday" name="week-checkbox"></li>
+                            <li>Wednesday  <input type="checkbox" value="Wednesday" name="week-checkbox"></li>
+                            <li>Thrusday  <input type="checkbox" value="Thrusday" name="week-checkbox"></li>
+                            <li>Friday  <input type="checkbox" value="Friday" name="week-checkbox"></li>
+                            <li>Saturday  <input type="checkbox" value="Saturday" name="week-checkbox"></li>
+                            <li>Sunday  <input type="checkbox" value="Sunday" name="week-checkbox"></li>
 
                         </form>
                     </div>
@@ -61,12 +61,12 @@
                 <div class="item"><a class="sub-btn">Colleges</a>
                     <div class="sub-menu">
                         <form method="POST" action="/">
-                            <li>Innis <input type="checkbox" value="17" name="my-checkbox"></li>
-                            <li>New College  <input type="checkbox" value="18" name="my-checkbox"></li>
-                            <li>Trinity  <input type="checkbox" value="19" name="my-checkbox"></li>
-                            <li>University College  <input type="checkbox" value="20" name="my-checkbox"></li>
-                            <li>Victoria  <input type="checkbox" value="21" name="my-checkbox"></li>
-                            <li>Woodsworth  <input type="checkbox" value="22" name="my-checkbox"></li>
+                            <li>Innis <input type="checkbox" value="Innis" name="college-checkbox"></li>
+                            <li>New College  <input type="checkbox" value="New College" name="college-checkbox"></li>
+                            <li>Trinity  <input type="checkbox" value="Trinity" name="college-checkbox"></li>
+                            <li>University College  <input type="checkbox" value="University College" name="college-checkbox"></li>
+                            <li>Victoria  <input type="checkbox" value="Victoria" name="college-checkbox"></li>
+                            <li>Woodsworth  <input type="checkbox" value="Woodsworth" name="college-checkbox"></li>
 
                         </form>
                     </div>
@@ -80,6 +80,15 @@
 
         <!-- jquery cdn link -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                console.log("jQuery is loaded and script is running!");
+            });
+
+            $('input[type="checkbox"]').change(function(){
+                console.log("Checkbox clicked!");
+            });
+</script>
 
         <script>
             $(document).ready(function(){
@@ -90,7 +99,42 @@
                     $(this).find('.dropdown').toggleClass('rotate');
                 });
 
-            })
+                $('input[type="checkbox"]').change(function(){
+                    let categories = [];
+                    let days = [];
+                    let colleges = [];
+
+                    $('input[type="checkbox"]:checked').each(function(){
+                        let value = $(this).val();
+                        let name = $(this).attr("name");
+
+                        if (name == "category-checkbox") {
+                            categories.push(value);
+                        } else if (name == "week-checkbox") {
+                            days.push(value);
+                        } else if (name == "college-checkbox") {
+                            colleges.push(value);
+                        }
+
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/update_selection",
+                        data: JSON.stringify({
+                            categories: categories,
+                            days: days,
+                            colleges: colleges
+                        }),
+                        contentType: "application/json",
+                        success: function(response){
+                            console.log("Server Response:", response);
+                        }
+                    });
+
+                });
+
+            });
 
         </script>
 

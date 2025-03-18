@@ -18,6 +18,7 @@ websites = {
     # "Trinity": "https://www.trinity.utoronto.ca/discover/calendar/",
     # "Innis": "https://innis.utoronto.ca/happening-at-innis/",
     # "Woodsworth": "https://www.mywcsa.com/current-events-instagram"
+
 }
 
 # Set up Selenium WebDriver
