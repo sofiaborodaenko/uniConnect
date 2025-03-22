@@ -6,17 +6,25 @@
         <title>uniConnect</title>
         <!--CSS file-->
         <link rel="stylesheet" href="static/output.css">
+        <link rel="stylesheet" href="static/styles/custom.css">
     </head>
     <body>
         <!--top banner -->
-        <div class="header">
+        <div class="header flex items-center justify-between ">
 
-            <div class="logo_container">
+            <div class="flex flex-row content-end w-full h-full">  <!--logo_container-->
                <!-- <img src="static/UofT.png">  -->
-                <h1 class="text-3xl font-bold underline">uni<span>Connect</span></h1>
-
+                <h1 class="basis-[15.6rem] flex-none text-center"> logo </h1>
+                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light ">uni<span class="font-bold">Connect</span></h1>
+                <h1 class="basis-1/8 flex-auto text-center">user profile</h1>
             </div>
 
+        </div>
+
+        <div class="user-form">
+                {% block user_form %}
+
+                {% endblock %}
 
         </div>
 
@@ -88,7 +96,7 @@
             $('input[type="checkbox"]').change(function(){
                 console.log("Checkbox clicked!");
             });
-</script>
+        </script>
 
         <script>
             $(document).ready(function(){
@@ -120,7 +128,7 @@
 
                     $.ajax({
                         type: "POST",
-                        url: "/update_selection",
+                        url: "/update-selection",
                         data: JSON.stringify({
                             categories: categories,
                             days: days,

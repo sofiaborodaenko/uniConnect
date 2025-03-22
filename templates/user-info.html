@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+
+{% block user_form %}
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.college.label }}
+    {{ form.college() }}
+    <br/>
+    {{ form.major.label }}
+    {{ form.major() }}
+    <br/>
+    {{ form.preferred_categories.label }}
+    {{ form.preferred_categories() }}
+    <br/>
+    {{ form.submit() }}
+
+</form>
+
+{% endblock %}
