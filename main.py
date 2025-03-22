@@ -30,9 +30,24 @@ def update_selection():
     As of now, prints the checkboxes that are clicked by the user
     """
     data = request.get_json()
+
     categories = data.get("categories", [])
     days = data.get("days", [])
     colleges = data.get("colleges", [])
+
+    user_selection = {
+        "categories": categories,
+        "days": days,
+        "colleges": colleges
+    }
+
+    # TODO: figure out how to clear the lists if page relods,
+    # one issue may be that when user clicks to have their preferences
+    # such as major, etc. page may reload automaitcally.
+
+    # creates a json file containing the selected filters
+    with open('user_selected_filters.json', 'w') as file:
+        json.dump(user_selection, file, indent=4)
 
     print("selected categories:", categories)
     print("selected days:", days)
