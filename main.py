@@ -41,7 +41,7 @@ def update_selection():
         "colleges": colleges
     }
 
-    # TODO: figure out how to clear the lists if page relods,
+    # figure out how to clear the lists if page relods,
     # one issue may be that when user clicks to have their preferences
     # such as major, etc. page may reload automaitcally.
 
