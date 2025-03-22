@@ -14,9 +14,9 @@
 
             <div class="flex flex-row content-end w-full h-full">  <!--logo_container-->
                <!-- <img src="static/UofT.png">  -->
-                <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png">                     <!---->
-                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light ">uni<span class="font-bold"><a href="#">Connect</a></span></h1>
-                <a href="#" id="user-icon" class="basis-1/8 flex-auto object-scale-down"><img class="w-12 h-17 object-cover justify-self-center" src="static/imgs/user-img.png" onclick="toggleMenu()"></a>
+                <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png">
+                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light ">uni<span class="font-bold"><a>Connect</a></span></h1>
+                <a class="basis-1/8 flex-auto object-scale-down "><img class="user-pfp w-12 h-17 object-cover justify-self-center" src="static/imgs/user-img.png" onclick="toggleMenu()"></a>
             <!---->
             </div>
 
@@ -39,8 +39,6 @@
                         {{ form.preferred_categories() }}
                         <br/>
                         {{ form.submit() }}
-
-
                     </form>
                 </div>
 

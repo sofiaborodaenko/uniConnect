@@ -10,8 +10,9 @@
 .user-form.open-form {
     max-height: 25rem;
 
+
 }
 
-img {
-    border-radius: 30%;
+.user-pfp {
+    cursor: pointer;
 }
