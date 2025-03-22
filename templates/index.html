@@ -10,23 +10,45 @@
     </head>
     <body>
         <!--top banner -->
-        <div class="header flex items-center justify-between ">
+        <div class="header flex items-center justify-between static">
 
             <div class="flex flex-row content-end w-full h-full">  <!--logo_container-->
                <!-- <img src="static/UofT.png">  -->
-                <h1 class="basis-[15.6rem] flex-none text-center"> logo </h1>
-                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light ">uni<span class="font-bold">Connect</span></h1>
-                <h1 class="basis-1/8 flex-auto text-center">user profile</h1>
+                <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png">                     <!---->
+                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light ">uni<span class="font-bold"><a href="#">Connect</a></span></h1>
+                <a href="#" id="user-icon" class="basis-1/8 flex-auto object-scale-down"><img class="w-12 h-17 object-cover justify-self-center" src="static/imgs/user-img.png" onclick="toggleMenu()"></a>
+            <!---->
+            </div>
+
+            <div class="user-form bg-blue-50 absolute top-full right-1/100 box-border" id="user-form">
+                <div class="p-6 m-6">
+                    <!--{% block user_form %}-->
+
+                    <!--{% endblock %}-->
+
+                    <form method="POST" >
+                        {{ form.hidden_tag() }}
+
+                        {{ form.college.label }}
+                        {{ form.college() }}
+                        <br/>
+                        {{ form.major.label }}
+                        {{ form.major() }}
+                        <br/>
+                        {{ form.preferred_categories.label }}
+                        {{ form.preferred_categories() }}
+                        <br/>
+                        {{ form.submit() }}
+
+
+                    </form>
+                </div>
+
             </div>
 
         </div>
 
-        <div class="user-form">
-                {% block user_form %}
 
-                {% endblock %}
-
-        </div>
 
         <!--sidebar-->
         <div class="side-bar">
@@ -88,6 +110,14 @@
 
         <!-- jquery cdn link -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+            let userForm = document.getElementById("user-form");
+
+            function toggleMenu(){
+                userForm.classList.toggle("open-form");
+            }
+        </script>
+
         <script>
             $(document).ready(function(){
                 console.log("jQuery is loaded and script is running!");

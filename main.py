@@ -15,13 +15,44 @@ class UserInfoForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
-@app.route("/")  # default route
+@app.route("/", methods=['POST', 'GET'])  # default route
 def index():
     """
     Renders the main page html
     """
 
-    return render_template('index.html')
+    college = None
+    major = None
+    preferred_categories = None
+    form = UserInfoForm()
+
+    # validating the form
+    if form.validate_on_submit():
+        college = form.college.data  # assigning the data to the variables
+        major = form.major.data
+        preferred_categories = form.preferred_categories.data
+
+        form.college.data = ''  # resetting the values
+        form.major.data = ''
+        form.preferred_categories.data = ''
+
+    user_data = {
+        "college": college,
+        "major": major,
+        "preferred categories": preferred_categories
+    }
+
+    # saves the info as a json file
+    with open("user_data.json", "w") as file:
+        json.dump(user_data, file, indent=4)
+
+    return render_template('index.html',
+                           college=college,
+                           major=major,
+                           preferred_categories=preferred_categories,
+                           form=form)
+
+   # return render_template('index.html')
 
 
 @app.route("/update-selection", methods=["POST"])
@@ -59,11 +90,10 @@ def update_selection():
         "colleges": colleges
     })
 
-
+"""
 @app.route("/user-info", methods=['GET', 'POST'])
 def user_info():
-    """
-    """
+    
     college = None
     major = None
     preferred_categories = None
@@ -89,12 +119,13 @@ def user_info():
     with open("user_data.json", "w") as file:
         json.dump(user_data, file, indent=4)
 
-    return render_template('user-info.html',
+    return render_template('index.html',
                            college=college,
                            major=major,
                            preferred_categories=preferred_categories,
                            form=form)
 
+"""
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
