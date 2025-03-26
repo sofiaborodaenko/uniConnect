@@ -101,6 +101,9 @@
 
                 </div>
 
+                <form>
+                    <button type="submit" name="reset" id="resetFilters">Reset Filters</button>
+                </form>
 
             </div>
 
@@ -128,6 +131,23 @@
 
         <script>
             $(document).ready(function(){
+
+                $.getJSON("static/user_selected_filters.json", function(data){
+                    if (data) {
+                        $('input[type="checkbox"]').each(function(){
+                            let checkboxValue = $(this).val();
+                            let checkboxName = $(this).attr("name");
+
+                            if ((checkboxName == "category-checkbox" && data.categories.includes(checkboxValue)) ||
+                                (checkboxName == "week-checkbox" && data.days.includes(checkboxValue)) ||
+                                (checkboxName == "college-checkbox" && data.colleges.includes(checkboxValue))) {
+
+                                $(this).prop("checked", true);
+                            }
+
+                        });
+                    }
+                });
 
                 // for toggling the sub-menus
                 $('.sub-btn').click(function(){
@@ -168,6 +188,20 @@
                         }
                     });
 
+                });
+
+                $("#resetFilters").click(function(){
+                    $('input[type="checkbox"]').prop("checked", false);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/reset-filters",
+                        contentType: "application/json",
+                        success: function(response){
+                            console.log(response.message);
+                         }
+
+                    });
                 });
 
             });

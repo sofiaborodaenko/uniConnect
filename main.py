@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = "password"
 
 
 class UserInfoForm(FlaskForm):
-    college = StringField("What College Are You In?")  #if want validators then, valdiators=[DataRequired()]
+    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
     major = StringField("What Major Are You In?")
     preferred_categories = StringField("What Are Your Preferred Categories?")
     submit = SubmitField("Submit")
@@ -26,12 +26,25 @@ def index():
     preferred_categories = None
     form = UserInfoForm()
 
+    # if the checkboxes were previously clicked, sends info to the frontend
+    try:
+        with open("static/user_selected_filters.json", "r") as file:
+            selected_filters = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        selected_filters = {"categories": [], "days": [], "colleges": []}
+
     # validating the form
     if form.validate_on_submit():
         college = form.college.data  # assigning the data to the variables
         major = form.major.data
         preferred_categories = form.preferred_categories.data
 
+        form.college.data = ''  # resetting the values
+        form.major.data = ''
+        form.preferred_categories.data = ''
+
+    # resets the values in the user_data if the reset button is clicked
+    if request.form.get('reset'):
         form.college.data = ''  # resetting the values
         form.major.data = ''
         form.preferred_categories.data = ''
@@ -43,16 +56,15 @@ def index():
     }
 
     # saves the info as a json file
-    with open("user_data.json", "w") as file:
+    with open("static/user_data.json", "w") as file:
         json.dump(user_data, file, indent=4)
 
     return render_template('index.html',
                            college=college,
                            major=major,
                            preferred_categories=preferred_categories,
-                           form=form)
-
-   # return render_template('index.html')
+                           form=form,
+                           selected_filters=selected_filters)
 
 
 @app.route("/update-selection", methods=["POST"])
@@ -72,12 +84,8 @@ def update_selection():
         "colleges": colleges
     }
 
-    # figure out how to clear the lists if page relods,
-    # one issue may be that when user clicks to have their preferences
-    # such as major, etc. page may reload automaitcally.
-
     # creates a json file containing the selected filters
-    with open('user_selected_filters.json', 'w') as file:
+    with open('static/user_selected_filters.json', 'w') as file:
         json.dump(user_selection, file, indent=4)
 
     print("selected categories:", categories)
@@ -89,6 +97,21 @@ def update_selection():
         "days": days,
         "colleges": colleges
     })
+
+
+@app.route("/reset-filters", methods=["POST"])
+def reset_filters():
+    """
+    Resets the user_selected_filter.json if the reset filters button is clicked
+    """
+
+    clear_filters = {"categories": [], "days": [], "colleges": []}
+
+    with open("static/user_selected_filters.json", "w") as file:
+        json.dump(clear_filters, file, indent=4)
+
+    return jsonify({"message": "Filters reset successfully"})
+
 
 """
 @app.route("/user-info", methods=['GET', 'POST'])
