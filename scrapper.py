@@ -22,7 +22,7 @@ def extract_data(url: str, source: str, college_name: str) -> dict:
     response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={
-            "Authorization": "Bearer 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",
+            "Authorization": "Bearer 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",
         },
         data=json.dumps({
             "model": "deepseek/deepseek-chat-v3-0324:free",
@@ -41,10 +41,13 @@ def extract_data(url: str, source: str, college_name: str) -> dict:
     )
 
     response_data = json.loads(response.text)
+    print(response_data)
     message_content = response_data['choices'][0]['message']['content']
 
     content_dict = {}
     content_array = message_content.split("\n")
+
+    print(content_array)
 
     for item in content_array:
         if ":" in item:
@@ -80,7 +83,7 @@ def scrape(url: str, add_url: str, college_name: str) -> None:
 
     for event in events:
         # For trinity
-        if event['href']:
+        if 'href' in event:
             if "http" in event['href']:
                 event_links.append(event['href'])
             else:
@@ -112,7 +115,7 @@ def scrape(url: str, add_url: str, college_name: str) -> None:
                 output_dict["post_time"],
                 output_dict["image"]
             )
-        except KeyError:
+        except:
             print("Event sucks or Deepseek messed up")
 
     return
@@ -124,11 +127,11 @@ if __name__ == "__main__":
     driver = webdriver.Chrome(options=chrome_options)
 
     scraped_events = []
-    # scrape("https://www.uc.utoronto.ca", "/about-uc-connect-us-events", "University College")
-    # scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
-    # scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
-    # scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
-    # scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")
+    scrape("https://www.uc.utoronto.ca", "/about-uc-connect-us-events", "University College")
+    scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
+    scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
+    scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
+    scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")
     scrape("https://www.trinity.utoronto.ca", "/discover/calendar", "Trinity College")
     print(scraped_events)
 
