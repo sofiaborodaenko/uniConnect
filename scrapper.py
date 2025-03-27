@@ -18,7 +18,7 @@ def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple
         "image": image
     })
 
-def extract_data(url: str, source: str, college_name: str) -> dict:
+def openai_request(url: str, source: str, college_name: str):
     response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -39,10 +39,47 @@ def extract_data(url: str, source: str, college_name: str) -> dict:
             ]
         })
     )
+    response_data = json.loads(response.text)
+    message_content = response_data['choices'][0]['message']['content']
+
+    return message_content
+
+def google_request(url: str, source: str, college_name: str):
+   # client = genai.Client(api_key="AIzaSyDvkDCbO1e2hoEKTUXkdUe_fEOcHTA1Jts")
+
+    response = requests.post(
+        url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDvkDCbO1e2hoEKTUXkdUe_fEOcHTA1Jts",
+        headers={
+            "Content-Type": "application/json",
+        },
+        data=json.dumps({
+            "model": "gemini-2.0-flash",
+            "contents": [
+                {
+                "parts": [
+                    {
+                        "text": "Use this HTML Page" + source
+                               + "And extract these information in this format of this event, where sorting_info is time in UNIX, category, the string \'" + college_name + "\' and image is the url of one image"
+                               + "name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: int, image: str"
+                               + "Do not add any comments or notes, ONLY THE EXTRACTED DATA, if there is nothing, leave it as None, or 0 for integers, if no cateory is found, leave it as Uncategorized"
+                               + "Leave it in PLAIN TEXT format, straight up, no code block formatting"
+                    }
+                ]
+                }
+
+            ]
+        })
+    )
 
     response_data = json.loads(response.text)
-    print(response_data)
-    message_content = response_data['choices'][0]['message']['content']
+    message_content = response_data["candidates"][0]["content"]["parts"][0]["text"]
+
+    return message_content
+
+
+def extract_data(url: str, source: str, college_name: str) -> dict:
+
+    message_content = google_request(url, source, college_name)
 
     content_dict = {}
     content_array = message_content.split("\n")
