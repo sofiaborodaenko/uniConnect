@@ -132,7 +132,7 @@ if __name__ == "__main__":
     scrape("https://www.trinity.utoronto.ca", "/discover/calendar", "Trinity College")
     print(scraped_events)
 
-    with open('u_of_t_events.json', 'w', encoding='utf-8') as file:
+    with open('static/u_of_t_events.json', 'w', encoding='utf-8') as file:
         json.dump(scraped_events, file, indent=4, ensure_ascii=False)
 
     driver.quit()

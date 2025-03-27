@@ -133,7 +133,7 @@ class EventTree:
 
 def generate_tree() -> EventTree:
     tree = EventTree(None, [])
-    with open('u_of_t_events.json', 'r', encoding='utf-8') as file:
+    with open('static/u_of_t_events.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
     for index, event in enumerate(data, start=1):
         print(event)
