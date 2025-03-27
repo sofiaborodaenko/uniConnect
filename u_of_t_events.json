@@ -1,0 +1,50 @@
+[
+    {
+        "name": "\"Registration Form: The Archibald Lampman Poetry Reading with Farah Ghafoor\",",
+        "desc": "\"Please fill in the following information to register for this event\",",
+        "location": null,
+        "sorting_info": [
+                0,
+                "",
+                "Trinity College"
+        ],
+        "posted_time": 0,
+        "image": null
+    },
+    {
+        "name": "Evaluating the Role of Recollection in Kierkegaard, Works of Love",
+        "desc": "Abstract: Søren Kierkegaard’s Works of Love offers a controversial interpretation of the commandment, “love your neighbor as yourself.” In the penultimate chapter entitled \"The Work of Love in Recollecting the One Who is Dead,\" Kierkegaard establishes a tenuous relationship between the work of love in recollecting the one who is dead and his broader theory of neighbourly love. My presentation focuses on Kierkegaard’s claim that recollection’s love is the most faithful, free, and unselfish. After reconstructing this claim, I argue that recollection’s way of loving is not directly transferable to neighbourly love, since the latter activity runs the risk of compromising the individual's freedom and faith. I argue this point by examining some of the pseudonymous perspectives in Kierkegaard's corpus (e.g. Johannes Climacus/A from Either/Or Part 1, the \"young man\" from Repetition) who successfully optimize their freedom and faith through recollecting a dead beloved, but fail to satisfy the conditions of neighbourly love.",
+        "location": "Divinity Common Room (DCR), Trinity College, University of Toronto, 6 Hoskin Avenue, Toronto",
+        "sorting_info": [
+            1730059200,
+            "Kierkegaard Circle",
+            "Trinity College"
+        ],
+        "posted_time": 0,
+        "image": "https://www.trinity.utoronto.ca/./images/Kierkegaard.gif"
+    },
+    {
+        "name": "Virtual and In-Person Information Sessions for Newly Admitted Students",
+        "desc": "There are many opportunities to begin getting oriented to your new community in the Trinity One Program and the University of Toronto, even before you arrive on campus in September! In June all newly admitted students will receive an invitation by email to join our Trinity One Online Community, which will run over the entire summer.",
+        "location": null,
+        "sorting_info": [
+            1739005200,
+            "Open Houses",
+            "Trinity College"
+        ],
+        "posted_time": 0,
+        "image": "https://www.trinity.utoronto.ca/wp-content/uploads/2025/02/March-Break-Shadow-Days-2025-Schedule-300x191.png"
+    },
+    {
+        "name": "Bill Graham Centre: Book Launch – East of Empire: Egypt, India, and the World Between the Wars",
+        "desc": "Join Cambridge historian Erin O’Halloran and bestselling author and former Trinity College Provost Margaret MacMillan for a discussion of Dr. O’Halloran’s new book East of Empire: Egypt, India, and the World Between the Wars.",
+        "location": "Trinity College - Seeley Hall",
+        "sorting_info": [
+            1732982400,
+            "Lecture or Seminar",
+            "Trinity College"
+        ],
+        "posted_time": 0,
+        "image": "https://www.trinity.utoronto.ca/wp-content/uploads/2025/03/EastofEmpireMar31Poster.png"
+    }
+]

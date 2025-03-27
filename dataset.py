@@ -17,7 +17,7 @@ websites = {
     "UC": "https://www.uc.utoronto.ca/about-uc-connect-us-events",
     # "Trinity": "https://www.trinity.utoronto.ca/discover/calendar/",
     # "Innis": "https://innis.utoronto.ca/happening-at-innis/",
-    # "Woodsworth": "https://www.mywcsa.com/current-events-instagram"
+    # "Woodsworth": "https://wdw.utoronto.ca/events"
 
 }
 
@@ -145,7 +145,7 @@ for source, url in websites.items():
 driver.quit()
 
 # Save all events to a JSON file
-with open('u_of_t_events.json', 'w', encoding='utf-8') as file:
+with open('static/u_of_t_events.json', 'w', encoding='utf-8') as file:
     json.dump(all_events, file, indent=4, ensure_ascii=False)
 
 # Print the scraped events for verification

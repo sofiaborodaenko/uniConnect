@@ -61,11 +61,18 @@ body {
 
 }
 
+/* .container {
+    display: grid;
+    grid-template-columns: 15.6rem auto;
+    height: calc(100vh - 6.25rem);
+    height: 100vh;
+
+}*/
+
 .side-bar {
     background: rgb(0, 57, 189);
     opacity: 0.8;
     width: 15.6rem;
-    height: calc(100vh - 6.25rem);
     position: fixed;
     top: 6.25rem;
     overflow-y: auto;

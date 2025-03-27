@@ -10,10 +10,29 @@
 .user-form.open-form {
     max-height: 25rem;
 
+}
+.user-pfp {
+    cursor: pointer;
+}
+
+.tree-container {
+    position: absolute;
+    bottom: 0;
+    right:2rem;
+    top: 6.25rem;
+    width: calc(100vw - 19.6rem);
+    opacity: 100;
 
 }
 
+.tree {
+}
 
-.user-pfp {
-    cursor: pointer;
+.node {
+    padding: 2rem;
+    border-style: solid;
+    border-radius: 1.5rem;
+    border-width: medium;
+    margin-bottom: 1.25rem;
+    margin-top: 1rem;
 }

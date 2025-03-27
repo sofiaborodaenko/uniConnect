@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 from datetime import datetime
-
+import json
 
 @dataclass
 class Event:
@@ -25,7 +25,7 @@ class Event:
     post_time: int
     image_src: Optional[str] = None
 
-    def __init__(self, name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: int,
+    def __init__(self, name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: Optional[int],
                  image: Optional[str] = None):
         self.name = name
         self.desc = desc
@@ -131,12 +131,38 @@ class EventTree:
 
         return filtered_events
 
+def generate_tree() -> EventTree:
+    tree = EventTree(None, [])
+    with open('u_of_t_events.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    for index, event in enumerate(data, start=1):
+        print(event)
+        name = event.get('name', '').strip('"')
+        desc = event.get('desc', '').strip('"')
+        location = event.get('location')
+        sorting_info = event.get('sorting_info')
+        posted_time = event.get('posted_time')
+
+        image = event.get('image')
+        if image:
+            image = image.strip('"')
+        if location:
+            location = location.strip('"')
+        print(sorting_info)
+        tree.insert(Event(name, desc, location, sorting_info, posted_time, image))
+
+    return tree
+
+
+
 if __name__ == "__main__":
     a = EventTree(None, [])
     a.insert(Event("Eat d", "", "", (1700000000, "UC", "Free Food"), 1700000000, "image_url"))
     a.insert(Event("talk", "", "", (1700000000, "My College", "Social"), 1700000000, "image_url"))
     a.insert(Event("Eat f", "", "", (1700000000, "My College", "Free Food"), 1700000000, "image_url"))
-    a.print_tree()
+
+    b = generate_tree()
+    b.print_tree()
 
 
-    print(a.filter_tree(["UC", "Free Food"]))
+    print(b.filter_tree(["Trinity College", "Open Houses"]))
