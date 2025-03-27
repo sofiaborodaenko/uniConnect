@@ -1,50 +1,28 @@
 [
     {
-        "source": "UC",
-        "title": "Nosotros in Canada: Situating LatinX /a /o Writing in Canada with Dr. Bárbara Simoes and Dr. Tania    Aguila-Way",
-        "date": "Mar 27",
-        "description": "Registration is not required."
+        "name": "Registration Form: The Archibald Lampman Poetry Reading with Farah Ghafoor,",
+        "desc": "Please fill in the following information to register for this event,",
+        "location": null,
+        "sorting_info": [
+
+                0,
+                "Uncategorized",
+                "Trinity College"
+
+        ],
+        "posted_time": 0,
+        "image": null
     },
     {
-        "source": "UC",
-        "title": "Classes end in S and Y courses",
-        "date": "Apr 4",
-        "description": "No description"
-    },
-    {
-        "source": "UC",
-        "title": "Toronto Aesthetics Sciences Conference (TASC)    2025",
-        "date": "Apr 8",
-        "description": "No description"
-    },
-    {
-        "source": "UC",
-        "title": "Final exams in S and Y courses",
-        "date": "Apr 9-30",
-        "description": "No description"
-    },
-    {
-        "source": "UC",
-        "title": "Good Friday",
-        "date": "Apr 18",
-        "description": "University closed; no classes or final assessments"
-    },
-    {
-        "source": "UC",
-        "title": "Smartphone Photography    101",
-        "date": "Apr 23",
-        "description": "Registration is required for in-person & online attendance"
-    },
-    {
-        "source": "UC",
-        "title": "2025-26 Neil Graham Lecture in    Science",
-        "date": "Oct 23",
-        "description": "No description"
-    },
-    {
-        "source": "UC",
-        "title": "2025-26 W. J. Alexander Lecture in English    Literature",
-        "date": "Mar 31",
-        "description": "No description"
+        "name": "Evaluating the Role of Recollection in Kierkegaard, Works of Love",
+        "desc": "Abstract: Søren Kierkegaard’s Works of Love offers a controversial interpretation of the commandment, “love your neighbor as yourself.” In the penultimate chapter entitled \"The Work of Love in Recollecting the One Who is Dead,\" Kierkegaard establishes a tenuous relationship between the work of love in recollecting the one who is dead and his broader theory of neighbourly love. My presentation focuses on Kierkegaard’s claim that recollection’s love is the most faithful, free, and unselfish. After reconstructing this claim, I argue that recollection’s way of loving is not directly transferable to neighbourly love, since the latter activity runs the risk of compromising the individual's freedom and faith. I argue this point by examining some of the pseudonymous perspectives in Kierkegaard's corpus (e.g. Johannes Climacus/A from Either/Or Part 1, the \"young man\" from Repetition) who successfully optimize their freedom and faith through recollecting a dead beloved, but fail to satisfy the conditions of neighbourly love.",
+        "location": "Divinity Common Room (DCR), Trinity College, University of Toronto, 6 Hoskin Avenue, Toronto",
+        "sorting_info": [
+            1730062800,
+            "Kierkegaard Circle",
+            "Trinity College"
+        ],
+        "posted_time": 0,
+        "image": "https://www.trinity.utoronto.ca/./images/Kierkegaard.gif"
     }
 ]

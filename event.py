@@ -136,7 +136,6 @@ def generate_tree() -> EventTree:
     with open('static/u_of_t_events.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
     for index, event in enumerate(data, start=1):
-        print(event)
         name = event.get('name', '').strip('"')
         desc = event.get('desc', '').strip('"')
         location = event.get('location')
@@ -148,7 +147,6 @@ def generate_tree() -> EventTree:
             image = image.strip('"')
         if location:
             location = location.strip('"')
-        print(sorting_info)
         tree.insert(Event(name, desc, location, sorting_info, posted_time, image))
 
     return tree

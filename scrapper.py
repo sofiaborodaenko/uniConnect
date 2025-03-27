@@ -32,7 +32,7 @@ def extract_data(url: str, source: str, college_name: str) -> dict:
                     "content": "Use this HTML Page" + source
                                + "And extract these information in this format of this event, where sorting_info is time in UNIX, category, the string \'" + college_name + "\' and image is the url of one image"
                                + "name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: int, image: str"
-                               + "Do not add any comments or notes, ONLY THE EXTRACTED DATA, if there is nothing, leave it as None, or 0 for integers"
+                               + "Do not add any comments or notes, ONLY THE EXTRACTED DATA, if there is nothing, leave it as None, or 0 for integers, if no cateory is found, leave it as Uncategorized"
                                + "Leave it in PLAIN TEXT format, straight up, no code block formatting"
 
                 }
