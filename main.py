@@ -15,13 +15,51 @@ class UserInfoForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
+def load_event_data():
+    """
+        Opens the two even json files
+    """
+    with open("static/scraped_events.json", "r") as file:
+        tree_version = json.load(file)
+
+    with open("static/u_of_t_events.json", "r") as file:
+        list_version = json.load(file)
+
+    print("tree_version: ", tree_version)
+    return tree_version, list_version
+
+
+def get_event_data(node):
+    """
+    """
+    if not node:
+        return []
+
+    result = []
+
+    for subtree in node.get("subtrees", []):
+        root = subtree.get("root", {})
+        children = get_event_data(subtree)
+        result.append({"name": root.get("name", "Unknown"), "children": children})
+
+    return result
+
+
 @app.route("/", methods=['POST', 'GET'])  # default route
 def index():
     """
     Renders the main page html
     """
+    print("index running")
 
-    college = None
+    tree_event_data = load_event_data()[0]
+    tree_event_structure = get_event_data(tree_event_data)
+    tree_event_structure_list = load_event_data()[1]
+
+    print(tree_event_structure)
+    print("list: ", tree_event_structure_list)
+
+    college = None  # initializes the values of the user form to none
     major = None
     preferred_categories = None
     form = UserInfoForm()
@@ -64,7 +102,9 @@ def index():
                            major=major,
                            preferred_categories=preferred_categories,
                            form=form,
-                           selected_filters=selected_filters)
+                           selected_filters=selected_filters,
+                           events_tree=tree_event_structure,
+                           events_list=tree_event_structure_list)
 
 
 @app.route("/update-selection", methods=["POST"])
@@ -151,7 +191,7 @@ def user_info():
 """
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8000)
 
 #Need a method to parse data
 #Import tkinter and Flask

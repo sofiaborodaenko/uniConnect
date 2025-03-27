@@ -135,7 +135,7 @@ class EventTree:
 a = EventTree(None, [])
 a.insert(Event("Eat d", "", "", (1700000000, "UC", "Free Food"), 1700000000, "image_url"))
 a.insert(Event("talk", "", "", (1700000000, "My College", "Social"), 1700000000, "image_url"))
-a.insert(Event("Eat f", "", "", (1700000000, "My College", "Free Food"), 1700000000, "image_url"))
+a.insert(Event("Eat f", "", "", (1800000000, "My College", "Free Food"), 1700000000, "image_url"))
 a.print_tree()
 
 
