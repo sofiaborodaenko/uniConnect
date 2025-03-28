@@ -46,6 +46,7 @@
 .event-img {
     width: 18rem;
     max-height: 18rem;
+    object-fit: contain;
 }
 
 .event-text {

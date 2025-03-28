@@ -17,6 +17,23 @@ class UserInfoForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
+@app.route('/event/<string:title>')
+def ind_event(title):
+    """
+        Gets the name of the event that the user clicks on and renders a new page
+    """
+    individual_event = {}
+    events = load_event_data()[0]  # loads the events and stores them in a list
+
+    # iterates through the list
+    for page in events:
+        if page['name'] == title:  # once event is found sets it to the variable
+            individual_event = page
+
+    # returns and renders a new page
+    return render_template('event.html', individual_event=individual_event)
+
+
 def load_event_data():
     """
         Opens the event json file

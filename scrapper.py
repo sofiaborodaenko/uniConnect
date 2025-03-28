@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
     scraped_events = []
     scrape("https://www.uc.utoronto.ca", "/about-uc-connect-us-events", "University College")
-    #scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
+    scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
     #scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
     #scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
     #scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")

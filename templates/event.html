@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  {% if individual_event['image'] %}
+    <div class="node">
+        <div class="flex">
+            <img class="event-img" src="{{ individual_event['image'] }}">
+            <div class="event-text grid">
+              <strong class="event-name">{{ individual_event['name'] }}</strong>
+                <p>{{ individual_event['sorting_info'][2]}}</p>
+                {% if individual_event['location'] %}
+                  <p class="event-location">{{ individual_event['location'] }}</p>
+                    {% endif %}
+
+                    <p class="event-location">{{ individual_event['sorting_info'][0] }}</p> </br>
+
+                    {% if individual_event['posted_time'] != 0 %}
+                      <p class="event-location">Posted on {{ individual_event['posted_time'] }}</p> </br>
+                    {% endif %}
+                    <p>{{ individual_event['desc'] }}</p>
+            </div>
+        </div>
+
+    </div>
+
+                    {% else %}
+                        <div class="node">
+                            <strong class="event-name">{{ individual_event['name'] }} </strong>
+                            <p>{{ individual_event['sorting_info'][2]}}</p>
+
+                            {% if individual_event['location'] %}
+                                <p class="event-location">{{ individual_event['location'] }}</p>
+                            {% endif %}
+
+                            <p class="event-location">{{ individual_event['sorting_info'][0] }}</p> </br>
+
+                            {% if individual_event['posted_time'] != 0 %}
+                                <p class="event-location">Posted on {{ individual_event['posted_time'] }}</p> </br>
+                            {% endif %}
+                            <p>{{ individual_event['desc'] }}</p>
+                        </div>
+
+                    {% endif %}
+</body>
+</html>

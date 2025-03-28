@@ -52,10 +52,10 @@
                     {% if item['image'] %}
                         <div class="node">
                            <div class="flex">
-                               <img class="event-img" src="{{ item['image'] }}">
+                              <img class="event-img" src="{{ item['image'] }}">
 
-                               <div class="event-text grid">
-                                    <strong class="event-name">{{ item['name'] }}</strong>
+                               <div class="event-text  grid">
+                                    <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}">{{ item['name'] }}</a></strong>
                                     <p>{{ item['sorting_info'][2]}}</p>
                                     {% if item['location'] %}
                                         <p class="event-location">{{ item['location'] }}</p>
@@ -74,7 +74,7 @@
 
                     {% else %}
                         <div class="node">
-                            <strong class="event-name">{{ item['name'] }} </strong>
+                            <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}">{{ item['name'] }} </a></strong>
                             <p>{{ item['sorting_info'][2]}}</p>
 
                             {% if item['location'] %}
