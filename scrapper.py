@@ -4,11 +4,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
 from typing import Optional
-import requests
 import json
 import ast
-
 import event
+
 
 def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple[int, str, str], posted_time: int, image: Optional[str]) -> None:
     scraped_events.append({
@@ -20,160 +19,171 @@ def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple
         "image": image
     })
 
-def openai_request(url: str, source: str, college_name: str):
-    response = requests.post(
-        url="https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": "Bearer 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",
-        },
-        data=json.dumps({
-            "model": "deepseek/deepseek-chat-v3-0324:free",
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "Use this HTML Page" + source
-                               + "And extract these information in this format of this event, where sorting_info is time in UNIX, category, the string \'" + college_name + "\' and image is the url of one image"
-                               + "name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: int, image: str"
-                               + "Do not add any comments or notes, ONLY THE EXTRACTED DATA, if there is nothing, leave it as None, or 0 for integers, if no cateory is found, leave it as Uncategorized"
-                               + "Leave it in PLAIN TEXT format, straight up, no code block formatting"
 
-                }
-            ]
-        })
-    )
-    response_data = json.loads(response.text)
-    message_content = response_data['choices'][0]['message']['content']
+def call_llm_models(url: str, source: str, college_name: str) -> str:
+    """
+    Calls multiple LLMs in order: Gemini -> DeepSeek -> Qwen -> Dolphin
+    Returns the first successful response.
+    """
+    prompts = f'''
+You are given the full HTML source of a web page from the {college_name} college event page.
 
-    return message_content
+Extract a **single event** from this page (if available), and output the following fields in exactly this format:
 
-def google_request(url: str, source: str, college_name: str):
-   # client = genai.Client(api_key="AIzaSyDvkDCbO1e2hoEKTUXkdUe_fEOcHTA1Jts")
+name: str  
+desc: str  
+location: str or None  
+sorting_info: tuple[int, str, str]  # (UNIX timestamp, category, "{college_name}")  
+post_time: int  
+image: str or None
 
-    response = requests.post(
-        url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDvkDCbO1e2hoEKTUXkdUe_fEOcHTA1Jts",
-        headers={
-            "Content-Type": "application/json",
-        },
-        data=json.dumps({
-            "model": "gemini-2.0-flash",
-            "contents": [
-                {
-                "parts": [
-                    {
-                        "text": "Use this HTML Page" + source
-                               + "And extract these information in this format of this event, where sorting_info is time in UNIX, category, the string \'" + college_name + "\' and image is the url of one image"
-                               + "name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: int, image: str"
-                               + "Do not add any comments or notes, ONLY THE EXTRACTED DATA, if there is nothing, leave it as None, or 0 for integers, if no cateory is found, leave it as Uncategorized"
-                               + "Leave it in PLAIN TEXT format, straight up, no code block formatting"
-                    }
-                ]
-                }
+Important Rules:
+- The `sorting_info[1]` is the event category (e.g. 'Free Food', 'Social', 'Sports', 'Academic', 'Career', 'Financial Help', 'Mental Health', 'Health', 'Outdoor Adventure', 'Uncategorized'). If you can't find an exact match, analyze the event content and **choose the closest category**. If it is truly unclear or ambiguous, label it as 'Uncategorized'.
+- The `sorting_info[2]` must always be "{college_name}"
+- If any field is missing, use `None`, and `0` for integers
+- `image` should be a full image URL (absolute path)
+- Do NOT include any extra notes, formatting, explanations, or markdown — just the raw fields.
+- Only extract **one** event, and output in plain text (no JSON, no code block)
 
-            ]
-        })
-    )
+HTML Source:
+{source}
+'''
+    try:
+        print("Trying Deepseek ...")
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={"Authorization": "Bearer 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"},
+            data=json.dumps({
+                "model": "deepseek/deepseek-chat-v3-0324:free",
+                "messages": [{"role": "user", "content": prompts}]
+            })
+        )
+        return json.loads(response.text)["choices"][0]["message"]["content"]
+    except:
+        print("DeepSeek failed, trying Gemini...")
 
-    response_data = json.loads(response.text)
-    message_content = response_data["candidates"][0]["content"]["parts"][0]["text"]
+    try:
+        print("Trying Gemini Flash...")
+        response = requests.post(
+            url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBGKtjloXqO3-9a8Barol8ORxkqO8h0jNY",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps({
+                "contents": [{"parts": [{"text": prompts}]}]
+            })
+        )
+        return json.loads(response.text)["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception as e:
+        print("Gemini failed, trying Qwen...")
 
-    return message_content
+
+
+    try:
+        print("Trying Qwen...")
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={"Authorization": "Bearer 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"},
+            data=json.dumps({
+                "model": "qwen/qwen-qwq-32b:free",
+                "messages": [{"role": "user", "content": prompts}]
+            })
+        )
+        return json.loads(response.text)["choices"][0]["message"]["content"]
+    except:
+        print("Qwen failed, trying Dolphin...")
+
+    try:
+        print("Trying Dolphin...")
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={"Authorization": "Bearer dolphin-3.0-mistral-24b"},
+            data=json.dumps({
+                "model": "dolphin/dolphin-3.0-mistral-24b:free",
+                "messages": [{"role": "user", "content": prompts}]
+            })
+        )
+        return json.loads(response.text)["choices"][0]["message"]["content"]
+    except:
+        print("All LLMs failed.")
+        return ""
 
 
 def extract_data(url: str, source: str, college_name: str) -> dict:
-
-    message_content = google_request(url, source, college_name)
-
+    message_content = call_llm_models(url, source, college_name)
     content_dict = {}
     content_array = message_content.split("\n")
-
-    print(content_array)
 
     for item in content_array:
         if ":" in item:
             key, value = item.split(': ', 1)
             value = value.strip()
-
             if key == "sorting_info":
-                sorting_vals = ast.literal_eval(value)
-                if not sorting_vals or len(sorting_vals) != 3:
+                try:
+                    sorting_vals = ast.literal_eval(value)
+                    content_dict[key] = sorting_vals if len(sorting_vals) == 3 else (0, 'Uncategorized', college_name)
+                except:
                     content_dict[key] = (0, 'Uncategorized', college_name)
-                content_dict[key] = sorting_vals
             elif 'None' in value or value == "":
                 content_dict[key] = None
             elif key == "post_time":
                 content_dict[key] = int(value.replace(',', ''))
             elif key == "image":
-                if "http" in value:
-                    content_dict[key] = value
-                else:
-                    content_dict[key] = url + "/" + value
+                content_dict[key] = value if "http" in value else url + "/" + value
             else:
                 content_dict[key] = value
 
     return content_dict
 
+
 def scrape(url: str, add_url: str, college_name: str) -> None:
     driver.get(url + add_url)
     time.sleep(3)
     soup = BeautifulSoup(driver.page_source, "html.parser")
-    events = soup.find_all(['div', 'li', 'article', 'a'], class_=['o-listing__list-item', 'm-listing-item--3cols', 'e-loop-item', 'archive-events', 'news-events-tile', 'tribe-events-calendar-month__day--current', 'events-link'])
+    events = soup.find_all(['div', 'li', 'article', 'a'], class_=[
+        'o-listing__list-item', 'm-listing-item--3cols', 'e-loop-item',
+        'archive-events', 'news-events-tile',
+        'tribe-events-calendar-month__day--current', 'events-link'
+    ])
     event_links = []
 
+    for item in events:
+        if 'href' in item.attrs:
+            event_links.append(item['href'] if "http" in item['href'] else url + item['href'])
+        else:
+            a_tag = item.find('a', href=True)
+            if a_tag:
+                href = a_tag['href']
+                event_links.append(href if "http" in href else url + href)
 
-    for events in events:
-        # For trinity
-        if 'href' in events:
-            if "http" in events['href']:
-                event_links.append(events['href'])
-            else:
-                event_links.append(url + events['href'])
-
-        # For every college except for trinity
-        extension = events.find('a', href=True)
-        if extension:
-
-            if "http" in extension['href']:
-                event_links.append(extension['href'])
-            else:
-                event_links.append(url + extension['href'])
-
-
-    print(event_links)
     for link in event_links:
         driver.get(link)
         time.sleep(3)
         try:
             output_dict = extract_data(url, driver.page_source, college_name)
-            print(output_dict)
-
             event.add_event_dict(
                 scraped_events,
-                output_dict["name"],
-                output_dict["desc"],
-                output_dict["location"],
-                output_dict["sorting_info"],
-                output_dict["post_time"],
-                output_dict["image"]
+                output_dict.get("name"),
+                output_dict.get("desc"),
+                output_dict.get("location"),
+                output_dict.get("sorting_info"),
+                output_dict.get("post_time"),
+                output_dict.get("image")
             )
         except:
-            print("Event sucks or Deepseek messed up")
-
-    return
+            print("Failed to extract event from:", link)
 
 
 if __name__ == "__main__":
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode (no browser window)
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
 
     scraped_events = []
     scrape("https://www.uc.utoronto.ca", "/about-uc-connect-us-events", "University College")
-    #scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
-    #scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
-    #scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
-    #scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")
-    #scrape("https://www.trinity.utoronto.ca", "/discover/calendar", "Trinity College")
-    print(scraped_events)
+    scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
+    scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
+    scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
+    scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")
+    scrape("https://www.trinity.utoronto.ca", "/discover/calendar", "Trinity College")
 
     with open('static/u_of_t_events.json', 'w', encoding='utf-8') as file:
         json.dump(scraped_events, file, indent=4, ensure_ascii=False)
