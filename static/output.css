@@ -29,7 +29,7 @@
     margin: 0;
     padding: 0;
     border: 0 solid;
-    overscroll-none;
+    overscroll: none;
   }
   html, :host {
     line-height: 1.5;

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -22,14 +24,23 @@ def ind_event(title):
     """
         Gets the name of the event that the user clicks on and renders a new page
     """
-    individual_event = {}
+    if title == "favicon.ico":
+        return "", 204  # return empty response with HTTP 204 (No Content)
+
+    individual_event = None
     events = load_event_data()[0]  # loads the events and stores them in a list
 
     # iterates through the list
     for page in events:
         if page['name'] == title:  # once event is found sets it to the variable
             individual_event = page
+            break
 
+    # Debugging
+    if individual_event is None:
+        print(f"Error: Event '{title}' not found in events list.")
+    else:
+        print("Loaded Event:", individual_event)
     # returns and renders a new page
     return render_template('event.html', individual_event=individual_event)
 
@@ -43,6 +54,22 @@ def load_event_data():
 
     with open("static/u_of_t_events_original.json", "r") as file:
         list_version_original = json.load(file)
+
+    # if type(sorting_info[0]) is int:
+    #    sorting_info_date = datetime.fromtimestamp(sorting_info[0]).strftime('%b %d, %Y')
+    #    sorting_info = (sorting_info_date, sorting_info[1], sorting_info[2])
+
+    # if posted_time != 0:
+    #    posted_time = datetime.fromtimestamp(posted_time).strftime('%Y-%m-%d %H:%M:%S')
+
+    for list_event in list_version:
+        if type(list_event['sorting_info'][0]) is int:
+            date = (datetime.fromtimestamp(list_event['sorting_info'][0]).strftime('%b %d, %Y'))
+            list_event['sorting_info'] = (date, list_event['sorting_info'][1], list_event['sorting_info'][2])
+
+        if list_event['posted_time'] != 0:
+            posted_time = datetime.fromtimestamp(list_event['posted_time']).strftime('%Y-%m-%d %H:%M:%S')
+            list_event['posted_time'] = posted_time
 
     return list_version, list_version_original
 
@@ -234,7 +261,7 @@ def user_info():
 """
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run(debug=True, port=8080)
 
 #Need a method to parse data
 #Import tkinter and Flask

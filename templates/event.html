@@ -9,10 +9,10 @@
 {% block body_content %}
 
 {% if individual_event['image'] %}
-    <div class="node">
-          <div class="flex">
-              <img class="event-img" src="{{ individual_event['image'] }}">
-              <div class="event-text grid">
+    <div class="event-node">
+          <div class="ind-content flex">
+              <img class="ind-event-img" src="{{ individual_event['image'] }}">
+              <div class="ind-event-text grid">
                   <strong class="event-name">{{ individual_event['name'] }}</strong>
                   <p>{{ individual_event['sorting_info'][2]}}</p>
                   {% if individual_event['location'] %}
@@ -24,14 +24,17 @@
                   {% if individual_event['posted_time'] != 0 %}
                       <p class="event-location">Posted on {{ individual_event['posted_time'] }}</p> </br>
                   {% endif %}
-                  <p>{{ individual_event['desc'] }}</p>
+
             </div>
+
         </div>
+            <p class="ind-event-desc">{{ individual_event['desc'] }}</p>
 
     </div>
 
 {% else %}
-  <div class="node">
+  <div class="ind-content">
+      <div class="no-img-content">
       <strong class="event-name">{{ individual_event['name'] }} </strong>
       <p>{{ individual_event['sorting_info'][2]}}</p>
 
@@ -44,8 +47,10 @@
       {% if individual_event['posted_time'] != 0 %}
         <p class="event-location">Posted on {{ individual_event['posted_time'] }}</p> </br>
       {% endif %}
-      <p>{{ individual_event['desc'] }}</p>
+      <p class="event-short-desc">{{ individual_event['desc'] }}</p>
+      </div>
   </div>
+
 
 {% endif %}
 

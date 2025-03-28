@@ -5,22 +5,24 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>uniConnect</title>
         <!--CSS file-->
-        <link rel="stylesheet" href="static/output.css">
-        <link rel="stylesheet" href="static/styles/custom.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/custom.css') }}">
+
     </head>
     <body>
         <!--top banner -->
-        <div class="header flex items-center justify-between static">
+        <div class="header flex items-center justify-between fixed">
 
-            <div class="flex flex-row content-end w-full h-full">  <!--logo_container-->
+            <div class="flex flex-row content-end w-full h-full top-0">  <!--logo_container-->
                <!-- <img src="static/UofT.png">  -->
                 <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png" draggable="false">
                 <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light " draggable="false">uni<span class="font-bold"><a>Connect</a></span></h1>
                 <a class="basis-1/8 flex-auto object-scale-down self-center "><img class="user-pfp w-12 h-17 object-cover justify-self-center " src="static/imgs/user-img.png" draggable="false" onclick="toggleMenu()"></a>
             <!---->
             </div>
-            {% block user_form %}
+
             <div class="user-form bg-blue-50 absolute top-full right-1/100 box-border" id="user-form">
+                {% block user_form %}
                 <div class="p-6 m-6">
 
 
@@ -41,9 +43,10 @@
 
 
                 </div>
+                 {% endblock %}
 
             </div>
-            {% endblock %}
+
 
         </div>
 
@@ -68,7 +71,9 @@
                                    {% if item['posted_time'] != 0 %}
                                         <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
                                     {% endif %}
-                                   <p>{{ item['desc'] }}</p>
+
+                                   <p class="event-short-desc">{{ item['desc'] }}</p>
+
                                </div>
                             </div>
 

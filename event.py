@@ -162,12 +162,6 @@ def add_event_dict(given_list: list, name: str, desc: str, location: Optional[st
     """
         Appends the event in the form of a dictionary to a given list
     """
-    #if type(sorting_info[0]) is int:
-    #    sorting_info_date = datetime.fromtimestamp(sorting_info[0]).strftime('%b %d, %Y')
-    #    sorting_info = (sorting_info_date, sorting_info[1], sorting_info[2])
-
-    if posted_time != 0:
-        posted_time = datetime.fromtimestamp(posted_time).strftime('%Y-%m-%d %H:%M:%S')
 
     given_list.append({
         "name": name,
