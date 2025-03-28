@@ -17,7 +17,7 @@ class UserInfoForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
-@app.route('/event/<string:title>')
+@app.route('/<string:title>')
 def ind_event(title):
     """
         Gets the name of the event that the user clicks on and renders a new page

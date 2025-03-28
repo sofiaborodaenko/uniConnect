@@ -19,12 +19,10 @@
                 <a class="basis-1/8 flex-auto object-scale-down self-center "><img class="user-pfp w-12 h-17 object-cover justify-self-center " src="static/imgs/user-img.png" draggable="false" onclick="toggleMenu()"></a>
             <!---->
             </div>
-
+            {% block user_form %}
             <div class="user-form bg-blue-50 absolute top-full right-1/100 box-border" id="user-form">
                 <div class="p-6 m-6">
-                    <!--{% block user_form %}-->
 
-                    <!--{% endblock %}-->
 
                     <form method="POST" >
                         {{ form.hidden_tag() }}
@@ -40,12 +38,16 @@
                         <br/>
                         {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded") }}
                     </form>
+
+
                 </div>
 
             </div>
+            {% endblock %}
 
         </div>
 
+        {% block body_content %}
         <div class="tree-container">
             <div class="tree">
                 {% for item in  events_list %}
@@ -99,8 +101,10 @@
 
             </div>
         </div>
+        {% endblock %}
 
             <!--sidebar-->
+            {% block side_bar %}
             <div class="side-bar">
 
                 <!-- menu items -->
@@ -160,6 +164,7 @@
                 </div>
 
             </div>
+            {% endblock %}
 
 
         <!-- jquery cdn link -->
