@@ -48,37 +48,46 @@
 
         <div class="tree-container">
             <div class="tree">
-                    <!--{% macro render_events_tree(nodes) %}
+                {% for item in  events_list %}
+                    {% if item['image'] %}
                         <div class="node">
-                            {% for node in nodes %}
+                           <div class="flex">
+                               <img class="event-img" src="{{ item['image'] }}">
 
-                                    <strong>{{ node.name }}</strong>
-                                    <p>{{ node.desc }}</p>
-                                    <p>{{ node.location }}</p>
+                               <div class="event-text grid">
+                                    <strong class="event-name">{{ item['name'] }}</strong>
+                                    <p>{{ item['sorting_info'][2]}}</p>
 
-                                    {% if node.children %}
-                                        {{ render_events_tree(node.children) }}
-
+                                    {% if item['location'] %}
+                                        <p class="event-location">{{ item['location'] }}</p>
                                     {% endif %}
 
-                                </div>
-                            {% endfor %}
-                    {% endmacro %}
+                                   <p>{{ item['date'] }}</p> </br>
+                                   <p>{{ item['desc'] }}</p>
+                               </div>
+                            </div>
 
-                    {{ render_events_tree(events_tree) }} -->
+                        </div>
 
-                {% for item in  events_list %}
-                    <div class="node">
-                        <strong>{{ item['name'] }} </strong>
-                        <p>{{ item['sorting_info'][2]}}</p>
+                    {% else %}
+                        <div class="node">
+                            <strong class="event-name">{{ item['name'] }} </strong>
+                            <p>{{ item['sorting_info'][2]}}</p>
 
-                        {% if item['location'] %}
-                            <p>{{ item['location'] }}</p>
-                        {% endif %}
+                            {% if item['location'] %}
+                                <p class="event-location">{{ item['location'] }}</p>
+                            {% endif %}
 
-                        <p>{{ item['date'] }}</p> </br>
-                        <p>{{ item['desc'] }}</p>
-                    </div>
+                            <p>{{ item['date'] }}</p> </br>
+                            <p>{{ item['desc'] }}</p>
+                        </div>
+
+                    {% endif %}
+
+
+
+
+
                 {% endfor %}
 
             </div>
@@ -125,11 +134,11 @@
                     <div class="item"><a class="sub-btn">Colleges</a>
                         <div class="sub-menu">
                             <form method="POST" action="/">
-                                <li>Innis <input type="checkbox" value="Innis" name="college-checkbox"></li>
+                                <li>Innis College <input type="checkbox" value="Innis College" name="college-checkbox"></li>
                                 <li>New College  <input type="checkbox" value="New College" name="college-checkbox"></li>
-                                <li>Trinity  <input type="checkbox" value="Trinity" name="college-checkbox"></li>
+                                <li>Trinity College <input type="checkbox" value="Trinity College" name="college-checkbox"></li>
                                 <li>University College  <input type="checkbox" value="University College" name="college-checkbox"></li>
-                                <li>Victoria  <input type="checkbox" value="Victoria" name="college-checkbox"></li>
+                                <li>Victoria College <input type="checkbox" value="Victoria College" name="college-checkbox"></li>
                                 <li>Woodsworth College <input type="checkbox" value="Woodsworth College" name="college-checkbox"></li>
 
                             </form>

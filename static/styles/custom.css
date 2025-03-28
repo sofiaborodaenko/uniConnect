@@ -28,6 +28,7 @@
 
 .tree {
     max-width: 90%;
+    min-width: 90%;
     position: absolute;
     left: 5%;
 
@@ -40,4 +41,22 @@
     border-width: medium;
     margin-bottom: 1.25rem;
     margin-top: 1rem;
+}
+
+.event-img {
+    width: 18rem;
+    height: auto;
+}
+
+.event-text {
+    padding-left: 3rem;
+}
+
+.event-name {
+    position: relative;
+    font-size:1.6rem;
+}
+
+.event-location {
+    font-size: 0.8rem;
 }
