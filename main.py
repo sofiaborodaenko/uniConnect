@@ -12,68 +12,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "password"
 
 
-class UserInfoForm(FlaskForm):
-    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
-    major = StringField("What Major Are You In?")
-    preferred_categories = StringField("What Are Your Preferred Categories?")
-    submit = SubmitField("Submit")
-
-
-@app.route('/<string:title>')
-def ind_event(title):
-    """
-        Gets the name of the event that the user clicks on and renders a new page
-    """
-    if title == "favicon.ico":
-        return "", 204  # return empty response with HTTP 204 (No Content)
-
-    individual_event = None
-    events = load_event_data()[0]  # loads the events and stores them in a list
-
-    # iterates through the list
-    for page in events:
-        if page['name'] == title:  # once event is found sets it to the variable
-            individual_event = page
-            break
-
-    # Debugging
-    if individual_event is None:
-        print(f"Error: Event '{title}' not found in events list.")
-    else:
-        print("Loaded Event:", individual_event)
-    # returns and renders a new page
-    return render_template('event.html', individual_event=individual_event)
-
-
-def load_event_data():
-    """
-        Opens the event json file
-    """
-    with open("static/u_of_t_events.json", "r") as file:
-        list_version = json.load(file)
-
-    with open("static/u_of_t_events_original.json", "r") as file:
-        list_version_original = json.load(file)
-
-    # if type(sorting_info[0]) is int:
-    #    sorting_info_date = datetime.fromtimestamp(sorting_info[0]).strftime('%b %d, %Y')
-    #    sorting_info = (sorting_info_date, sorting_info[1], sorting_info[2])
-
-    # if posted_time != 0:
-    #    posted_time = datetime.fromtimestamp(posted_time).strftime('%Y-%m-%d %H:%M:%S')
-
-    for list_event in list_version:
-        if type(list_event['sorting_info'][0]) is int:
-            date = (datetime.fromtimestamp(list_event['sorting_info'][0]).strftime('%b %d, %Y'))
-            list_event['sorting_info'] = (date, list_event['sorting_info'][1], list_event['sorting_info'][2])
-
-        if list_event['posted_time'] != 0:
-            posted_time = datetime.fromtimestamp(list_event['posted_time']).strftime('%Y-%m-%d %H:%M:%S')
-            list_event['posted_time'] = posted_time
-
-    return list_version, list_version_original
-
-
 @app.route("/", methods=['POST', 'GET'])  # default route
 def index():
     """
@@ -89,7 +27,7 @@ def index():
     except (FileNotFoundError, json.JSONDecodeError):
         selected_filters = {"categories": [], "days": [], "colleges": []}
 
-    tree_event_structure_list = load_event_data()[0]
+    tree_event_structure_list = load_event_data()[0]  # loads the even list
     # print(tree_event_structure)
     # print("list: ", tree_event_structure_list)
 
@@ -131,6 +69,75 @@ def index():
                            form=form,
                            selected_filters=selected_filters,
                            events_list=tree_event_structure_list)
+
+
+@app.route('/<string:title>')
+def ind_event(title):
+    """
+        Gets the name of the event that the user clicks on and renders a new page for that event
+    """
+    if title == "favicon.ico":
+        return "", 204  # return empty response with HTTP 204 (No Content)
+
+    individual_event = None
+    events = load_event_data()[0]  # loads the events and stores them in a list
+
+    # iterates through the list
+    for page in events:
+        if page['name'] == title:  # once event is found sets it to the variable
+            individual_event = page
+            break
+
+    # returns and renders a new page
+    return render_template('event.html', individual_event=individual_event)
+
+
+def load_event_data():
+    """
+        Opens the event json file
+    """
+    with open("static/u_of_t_events.json", "r") as file:
+        list_version = json.load(file)
+
+    with open("static/u_of_t_events_original.json", "r") as file:
+        list_version_original = json.load(file)
+
+    # if type(sorting_info[0]) is int:
+    #    sorting_info_date = datetime.fromtimestamp(sorting_info[0]).strftime('%b %d, %Y')
+    #    sorting_info = (sorting_info_date, sorting_info[1], sorting_info[2])
+
+    # if posted_time != 0:
+    #    posted_time = datetime.fromtimestamp(posted_time).strftime('%Y-%m-%d %H:%M:%S')
+
+    # iteraties through the event list and converts the time for readability
+    for list_event in list_version:
+        if type(list_event['sorting_info'][0]) is int:
+            date = (datetime.fromtimestamp(list_event['sorting_info'][0]).strftime('%b %d, %Y'))
+            list_event['sorting_info'] = (date, list_event['sorting_info'][1], list_event['sorting_info'][2])
+
+        if list_event['posted_time'] != 0:
+            posted_time = datetime.fromtimestamp(list_event['posted_time']).strftime('%Y-%m-%d %H:%M:%S')
+            list_event['posted_time'] = posted_time
+
+    return list_version, list_version_original
+
+
+@app.route("/reset-filters", methods=["POST"])
+def reset_filters():
+    """
+    Resets the user_selected_filter.json if the reset filters button is clicked
+    """
+
+    clear_filters = {"categories": [], "days": [], "colleges": []}
+
+    with open("static/user_selected_filters.json", "w") as file:
+        json.dump(clear_filters, file, indent=4)
+
+    original_events = load_event_data()[1]  # gets the original events that were scrapped
+    with open('static/u_of_t_events.json', 'w') as file:
+        json.dump(original_events, file, indent=4)  # repopulates the u_of_t_events.json
+
+    return jsonify({"message": "Filters reset successfully"})
 
 
 @app.route("/update-selection", methods=["POST"])
@@ -205,22 +212,15 @@ def update_selection():
     })
 
 
-@app.route("/reset-filters", methods=["POST"])
-def reset_filters():
+class UserInfoForm(FlaskForm):
     """
-    Resets the user_selected_filter.json if the reset filters button is clicked
+        UserInfoForm stores and generates a form for the user to fill out depending on their preferences
     """
 
-    clear_filters = {"categories": [], "days": [], "colleges": []}
-
-    with open("static/user_selected_filters.json", "w") as file:
-        json.dump(clear_filters, file, indent=4)
-
-    original_events = load_event_data()[1]
-    with open('static/u_of_t_events.json', 'w') as file:
-        json.dump(original_events, file, indent=4)
-
-    return jsonify({"message": "Filters reset successfully"})
+    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
+    major = StringField("What Major Are You In?")
+    preferred_categories = StringField("What Are Your Preferred Categories?")
+    submit = SubmitField("Submit")
 
 
 """

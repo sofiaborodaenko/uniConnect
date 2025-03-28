@@ -52,8 +52,10 @@
 }
 
 .event-node {
+    max-width: 70%;
     overflow-y: auto;
     padding: 2rem;
+    margin-left: 13rem;
     margin-bottom: 1.25rem;
     margin-top: 6.5rem;
 
@@ -73,8 +75,14 @@
 }
 
 .ind-content {
+    max-width: 70%;
     scroll-y: auto;
     overflow: hidden;
+    padding: 2rem;
+    margin-left: 13rem;
+    margin-bottom: 1.25rem;
+    margin-top: 6.5rem;
+
 
 }
 
@@ -86,15 +94,18 @@
 
 .event-text {
     padding-left: 3rem;
+
 }
 
 .ind-event-text {
    padding-left: 3rem;
+
 }
 
 .ind-event-desc {
     padding-top: 3rem;
     line-height: 2.5rem;
+    text-align: justify;
 }
 
 .event-name {
@@ -104,6 +115,7 @@
 
 .event-location {
     font-size: 0.8rem;
+
 }
 
 .event-short-desc {
