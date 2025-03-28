@@ -57,12 +57,15 @@
                                <div class="event-text grid">
                                     <strong class="event-name">{{ item['name'] }}</strong>
                                     <p>{{ item['sorting_info'][2]}}</p>
-
                                     {% if item['location'] %}
                                         <p class="event-location">{{ item['location'] }}</p>
                                     {% endif %}
 
-                                   <p>{{ item['date'] }}</p> </br>
+                                    <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
+
+                                   {% if item['posted_time'] != 0 %}
+                                        <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
+                                    {% endif %}
                                    <p>{{ item['desc'] }}</p>
                                </div>
                             </div>
@@ -78,7 +81,11 @@
                                 <p class="event-location">{{ item['location'] }}</p>
                             {% endif %}
 
-                            <p>{{ item['date'] }}</p> </br>
+                            <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
+
+                            {% if item['posted_time'] != 0 %}
+                                <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
+                            {% endif %}
                             <p>{{ item['desc'] }}</p>
                         </div>
 
