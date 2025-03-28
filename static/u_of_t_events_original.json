@@ -1,7 +1,19 @@
 [
     {
+        "name": "2025-26 Neil Graham Lecture in Science",
+        "desc": "The Neil Graham Lecture series was established through the generosity of Mr. Neil Graham, a 1930 graduate of University College and a former teacher of high school mathematics. 2025 event details forthcoming.",
+        "location": null,
+        "sorting_info": [
+            1761195600,
+            "Endowed Lecture Series",
+            "University College"
+        ],
+        "posted_time": 0,
+        "image": null
+    },
+    {
         "name": "Academic Bridging Program Info Session",
-        "desc": "Curious to learn more about the\u00a0Academic Bridging Program?\u00a0Ask your questions at one of our\u00a0virtual information sessions. The next info session will take place March 27, 2025.",
+        "desc": "Curious to learn more about the Academic Bridging Program? Ask your questions at one of our virtual information sessions. The next info session will take place March 27, 2025.",
         "location": "Online",
         "sorting_info": [
             1711502400,
@@ -13,7 +25,7 @@
     },
     {
         "name": "Academic Bridging Program Info Session",
-        "desc": "Curious to learn more about the\u00a0Academic Bridging Program?\u00a0Ask your questions at one of our\u00a0virtual information sessions. The next info session will take place April 1, 2025.",
+        "desc": "Curious to learn more about the Academic Bridging Program? Ask your questions at one of our virtual information sessions. The next info session will take place April 1, 2025.",
         "location": "Online",
         "sorting_info": [
             1711928400,

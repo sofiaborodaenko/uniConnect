@@ -14,9 +14,9 @@
 
             <div class="flex flex-row content-end w-full h-full">  <!--logo_container-->
                <!-- <img src="static/UofT.png">  -->
-                <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png">
-                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light ">uni<span class="font-bold"><a>Connect</a></span></h1>
-                <a class="basis-1/8 flex-auto object-scale-down self-center "><img class="user-pfp w-12 h-17 object-cover justify-self-center " src="static/imgs/user-img.png" onclick="toggleMenu()"></a>
+                <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png" draggable="false">
+                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light " draggable="false">uni<span class="font-bold"><a>Connect</a></span></h1>
+                <a class="basis-1/8 flex-auto object-scale-down self-center "><img class="user-pfp w-12 h-17 object-cover justify-self-center " src="static/imgs/user-img.png" draggable="false" onclick="toggleMenu()"></a>
             <!---->
             </div>
 
@@ -46,8 +46,8 @@
 
         </div>
 
-            <div class="tree-container">
-                <div class="tree">
+        <div class="tree-container">
+            <div class="tree">
                     <!--{% macro render_events_tree(nodes) %}
                         <div class="node">
                             {% for node in nodes %}
@@ -67,21 +67,22 @@
 
                     {{ render_events_tree(events_tree) }} -->
 
+                {% for item in  events_list %}
+                    <div class="node">
+                        <strong>{{ item['name'] }} </strong>
+                        <p>{{ item['sorting_info'][2]}}</p>
 
+                        {% if item['location'] %}
+                            <p>{{ item['location'] }}</p>
+                        {% endif %}
 
+                        <p>{{ item['date'] }}</p> </br>
+                        <p>{{ item['desc'] }}</p>
+                    </div>
+                {% endfor %}
 
-                        {% for item in  events_list %}
-                            <div class="node">
-                                <strong>{{ item['title'] }} </strong>
-                                <p>{{ item['source'] }}</p>
-                                <p>{{ item['date'] }}</p> </br>
-                                <p>{{ item['description'] }}</p>
-                            </div>
-                        {% endfor %}
-
-
-                </div>
             </div>
+        </div>
 
             <!--sidebar-->
             <div class="side-bar">
@@ -129,14 +130,14 @@
                                 <li>Trinity  <input type="checkbox" value="Trinity" name="college-checkbox"></li>
                                 <li>University College  <input type="checkbox" value="University College" name="college-checkbox"></li>
                                 <li>Victoria  <input type="checkbox" value="Victoria" name="college-checkbox"></li>
-                                <li>Woodsworth  <input type="checkbox" value="Woodsworth" name="college-checkbox"></li>
+                                <li>Woodsworth College <input type="checkbox" value="Woodsworth College" name="college-checkbox"></li>
 
                             </form>
                         </div>
 
                     </div>
 
-                    <form class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <form class="">
                         <button type="submit" name="reset" id="resetFilters" >Reset Filters</button>
                     </form>
 
@@ -222,6 +223,7 @@
                         contentType: "application/json",
                         success: function(response){
                             console.log("Server Response:", response);
+                            location.reload();
                         }
                     });
 

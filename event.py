@@ -4,6 +4,7 @@ from typing import Optional
 from datetime import datetime
 import json
 
+
 @dataclass
 class Event:
     """
@@ -25,7 +26,8 @@ class Event:
     post_time: int
     image_src: Optional[str] = None
 
-    def __init__(self, name: str, desc: str, location: str, sorting_info: tuple[int, str, str], post_time: Optional[int],
+    def __init__(self, name: str, desc: str, location: str, sorting_info: tuple[int, str, str],
+                 post_time: Optional[int],
                  image: Optional[str] = None):
         self.name = name
         self.desc = desc
@@ -131,9 +133,12 @@ class EventTree:
 
         return filtered_events
 
+
 def generate_tree() -> EventTree:
+    """
+    """
     tree = EventTree(None, [])
-    with open('static/u_of_t_events.json', 'r', encoding='utf-8') as file:
+    with open('static/u_of_t_events_original.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
     for index, event in enumerate(data, start=1):
         name = event.get('name', '').strip('"')
@@ -152,6 +157,20 @@ def generate_tree() -> EventTree:
     return tree
 
 
+def add_event_dict(given_list: list, name: str, desc: str, location: Optional[str], sorting_info: tuple[int, str, str],
+                   posted_time: int, image: Optional[str]) -> None:
+    """
+        Appends the event in the form of a dictionary to a given list
+    """
+    given_list.append({
+        "name": name,
+        "desc": desc,
+        "location": location,
+        "sorting_info": sorting_info,
+        "posted_time": posted_time,
+        "image": image
+    })
+
 
 if __name__ == "__main__":
     a = EventTree(None, [])
@@ -162,5 +181,4 @@ if __name__ == "__main__":
     b = generate_tree()
     b.print_tree()
 
-
-    print(b.filter_tree(["Trinity College", "Open Houses"]))
+    print(b.filter_tree(["Woodsworth College"]))

@@ -18,14 +18,19 @@
 .tree-container {
     position: absolute;
     bottom: 0;
-    right:2rem;
+    right:0;
     top: 6.25rem;
-    width: calc(100vw - 19.6rem);
+    width: calc(100vw - 15.6rem);
     opacity: 100;
+    overflow-y: auto;
 
 }
 
 .tree {
+    max-width: 90%;
+    position: absolute;
+    left: 5%;
+
 }
 
 .node {

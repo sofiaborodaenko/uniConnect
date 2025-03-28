@@ -8,6 +8,8 @@ import requests
 import json
 import ast
 
+import event
+
 def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple[int, str, str], posted_time: int, image: Optional[str]) -> None:
     scraped_events.append({
         "name": name,
@@ -118,16 +120,16 @@ def scrape(url: str, add_url: str, college_name: str) -> None:
     event_links = []
 
 
-    for event in events:
+    for events in events:
         # For trinity
-        if 'href' in event:
-            if "http" in event['href']:
-                event_links.append(event['href'])
+        if 'href' in events:
+            if "http" in events['href']:
+                event_links.append(events['href'])
             else:
-                event_links.append(url + event['href'])
+                event_links.append(url + events['href'])
 
         # For every college except for trinity
-        extension = event.find('a', href=True)
+        extension = events.find('a', href=True)
         if extension:
 
             if "http" in extension['href']:
@@ -144,7 +146,8 @@ def scrape(url: str, add_url: str, college_name: str) -> None:
             output_dict = extract_data(url, driver.page_source, college_name)
             print(output_dict)
 
-            add_event(
+            event.add_event_dict(
+                scraped_events,
                 output_dict["name"],
                 output_dict["desc"],
                 output_dict["location"],
@@ -166,13 +169,16 @@ if __name__ == "__main__":
     scraped_events = []
     scrape("https://www.uc.utoronto.ca", "/about-uc-connect-us-events", "University College")
     scrape("https://wdw.utoronto.ca", "/events", "Woodsworth College")
-    scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
-    scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
-    scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")
-    scrape("https://www.trinity.utoronto.ca", "/discover/calendar", "Trinity College")
+    #scrape("https://innis.utoronto.ca", "/happening-at-innis", "Innis College")
+    #scrape("https://www.newcollege.utoronto.ca", "/events", "New College")
+    #scrape("https://www.vicu.utoronto.ca", "/whats-happening", "Victoria College")
+    #scrape("https://www.trinity.utoronto.ca", "/discover/calendar", "Trinity College")
     print(scraped_events)
 
     with open('static/u_of_t_events.json', 'w', encoding='utf-8') as file:
+        json.dump(scraped_events, file, indent=4, ensure_ascii=False)
+
+    with open('static/u_of_t_events_original.json', 'w', encoding='utf-8') as file:
         json.dump(scraped_events, file, indent=4, ensure_ascii=False)
 
     driver.quit()
