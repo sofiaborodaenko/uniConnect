@@ -12,7 +12,6 @@ app.config['SECRET_KEY'] = "password"
 
 event_tree = event.generate_tree()
 
-
 def original_event_tree_to_list(append_list: list) -> list:
     """
     """
