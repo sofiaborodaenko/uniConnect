@@ -75,8 +75,6 @@ HTML Source:
     except Exception as e:
         print("Gemini failed, trying Qwen...")
 
-
-
     try:
         print("Trying Qwen...")
         response = requests.post(
