@@ -133,6 +133,21 @@ class EventTree:
 
         return filtered_events
 
+    def events_to_list(self) -> list[Event]:
+        """
+            Returns a list of all the events in the tree
+        """
+        if not self.subtrees:
+            return [self.root]
+        else:
+            to_list = []
+
+            for child in self.subtrees:
+                if child.events_to_list():
+                    to_list.extend(child.events_to_list())
+
+            return to_list
+
 
 def generate_tree() -> EventTree:
     """
@@ -178,6 +193,8 @@ if __name__ == "__main__":
     a.insert(Event("Eat d", "", "", (1700000000, "UC", "Free Food"), 1700000000, "image_url"))
     a.insert(Event("talk", "", "", (1700000000, "My College", "Social"), 1700000000, "image_url"))
     a.insert(Event("Eat f", "", "", (1700000000, "My College", "Free Food"), 1700000000, "image_url"))
+
+    print(a.events_to_list())
 
     b = generate_tree()
     b.print_tree()

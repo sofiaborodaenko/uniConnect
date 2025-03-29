@@ -6,10 +6,29 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 import json
 import event
-import scrapper
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "password"
+
+event_tree = event.generate_tree()
+
+
+def original_event_tree_to_list(append_list: list) -> list:
+    """
+    """
+    for events in event_tree.events_to_list():
+        event.add_event_dict(
+            append_list,
+            events.name,
+            events.desc,
+            events.location,
+            events.sorting_info,
+            events.post_time,
+            events.image
+
+        )
+
+    return append_list
 
 
 @app.route("/", methods=['POST', 'GET'])  # default route
@@ -27,10 +46,43 @@ def index():
     except (FileNotFoundError, json.JSONDecodeError):
         selected_filters = {"categories": [], "days": [], "colleges": []}
 
-    tree_event_structure_list = load_event_data()[0]  # loads the even list
+
+    tree_event_structure_list = load_event_data()
+
+    # tree_event_structure_list = load_event_data()[0]  # loads the even list
     # print(tree_event_structure)
     # print("list: ", tree_event_structure_list)
 
+    #user_checkbox_info = update_selection()  # gets dict of the lists
+    """event_lists = filter_events(user_checkbox_info)  # stores a list of dict of filtered events
+
+    if event_lists is []:
+        for events in event_tree.events_to_list():
+            event.add_event_dict(
+                event_lists,
+                events.name,
+                events.desc,
+                events.location,
+                events.sorting_info,
+                events.post_time,
+                events.image
+
+            )"""
+
+    form_information = user_form_information()
+
+    return render_template('index.html',
+                           college=form_information["college"],
+                           major=form_information["major"],
+                           preferred_categories=form_information["preferred categories"],
+                           form=form_information["form"],
+                           selected_filters=selected_filters,
+                           events_list=tree_event_structure_list)
+
+
+def user_form_information() -> dict:
+    """
+    """
     college = None  # initializes the values of the user form to none
     major = None
     preferred_categories = None
@@ -62,25 +114,19 @@ def index():
     with open("static/user_data.json", "w") as file:
         json.dump(user_data, file, indent=4)
 
-    return render_template('index.html',
-                           college=college,
-                           major=major,
-                           preferred_categories=preferred_categories,
-                           form=form,
-                           selected_filters=selected_filters,
-                           events_list=tree_event_structure_list)
+    user_data["form"] = form
+
+    return user_data
 
 
 @app.route('/<string:title>')
 def ind_event(title):
-    """
-        Gets the name of the event that the user clicks on and renders a new page for that event
-    """
+
     if title == "favicon.ico":
         return "", 204  # return empty response with HTTP 204 (No Content)
 
     individual_event = None
-    events = load_event_data()[0]  # loads the events and stores them in a list
+    events = load_event_data()  # loads the events and stores them in a list
 
     # iterates through the list
     for page in events:
@@ -95,12 +141,23 @@ def ind_event(title):
 def load_event_data():
     """
         Opens the event json file
-    """
-    with open("static/u_of_t_events.json", "r") as file:
-        list_version = json.load(file)
 
-    with open("static/u_of_t_events_original.json", "r") as file:
-        list_version_original = json.load(file)
+
+    #with open("static/u_of_t_events.json", "r") as file:
+    #list_version = json.load(file)
+
+    original_events = []
+    original_events = original_event_tree_to_list(original_events)
+
+
+    with open("static/events.json", "w") as file:
+        json.dump(original_events, file, indent=4)"""
+
+    with open("static/events.json", "r") as file:
+        list_events_json = json.load(file)
+
+
+
 
     # if type(sorting_info[0]) is int:
     #    sorting_info_date = datetime.fromtimestamp(sorting_info[0]).strftime('%b %d, %Y')
@@ -110,16 +167,16 @@ def load_event_data():
     #    posted_time = datetime.fromtimestamp(posted_time).strftime('%Y-%m-%d %H:%M:%S')
 
     # iteraties through the event list and converts the time for readability
-    for list_event in list_version:
+    """for list_event in list_version:
         if type(list_event['sorting_info'][0]) is int:
             date = (datetime.fromtimestamp(list_event['sorting_info'][0]).strftime('%b %d, %Y'))
             list_event['sorting_info'] = (date, list_event['sorting_info'][1], list_event['sorting_info'][2])
 
         if list_event['posted_time'] != 0:
             posted_time = datetime.fromtimestamp(list_event['posted_time']).strftime('%Y-%m-%d %H:%M:%S')
-            list_event['posted_time'] = posted_time
+            list_event['posted_time'] = posted_time"""
 
-    return list_version, list_version_original
+    return list_events_json
 
 
 @app.route("/reset-filters", methods=["POST"])
@@ -133,8 +190,9 @@ def reset_filters():
     with open("static/user_selected_filters.json", "w") as file:
         json.dump(clear_filters, file, indent=4)
 
-    original_events = load_event_data()[1]  # gets the original events that were scrapped
-    with open('static/u_of_t_events.json', 'w') as file:
+    original_events = []
+    original_events = original_event_tree_to_list(original_events)  # gets the original events that were scrapped
+    with open('static/events.json', 'w') as file:
         json.dump(original_events, file, indent=4)  # repopulates the u_of_t_events.json
 
     return jsonify({"message": "Filters reset successfully"})
@@ -143,8 +201,7 @@ def reset_filters():
 @app.route("/update-selection", methods=["POST"])
 def update_selection():
     """
-        Gets the categories the user selected, creates a json file with the lists,
-        filters the u_of_t_events.json.
+
     """
     data = request.get_json()
 
@@ -158,28 +215,40 @@ def update_selection():
         "colleges": colleges
     }
 
+    print(user_selection)
+
+    event_lists = filter_events(user_selection)  # stores a list of dict of filtered events
+
+    if not event_lists:
+        original_event_tree_to_list(event_lists)
+
+    print("Filtered events to save:", event_lists)
+
+    with open('static/events.json', 'w') as file:
+        json.dump(event_lists, file, indent=4)
+
     # creates a json file containing the selected filters
     with open('static/user_selected_filters.json', 'w') as file:
         json.dump(user_selection, file, indent=4)
 
-    # print("selected categories:", categories)
-    # print("selected days:", days)
-    # print("selected colleges:", colleges)
+    print("selected categories:", categories)
+    print("selected days:", days)
+    print("selected colleges:", colleges)
 
     # generates a tree from the u_of_t_events.json
-    uoft_event_tree = event.generate_tree()
-    filtered_events = []  # keeps the events after theyre filtered
+    # uoft_event_tree = event.generate_tree()
+    """filtered_events = []  # keeps the events after theyre filtered
     filtered_events_for_json = []  # keeps the evens after they're convereted to a dict
 
     # filter the events if the lists are populated
     if categories:
-        filtered_events.extend(uoft_event_tree.filter_tree(categories))
+        filtered_events.extend(event_tree.filter_tree(categories))
 
     if days:
-        filtered_events.extend(uoft_event_tree.filter_tree(days))
+        filtered_events.extend(event_tree.filter_tree(days))
 
     if colleges:
-        filtered_events.extend(uoft_event_tree.filter_tree(colleges))
+        filtered_events.extend(event_tree.filter_tree(colleges))
 
     print(filtered_events)
 
@@ -203,13 +272,51 @@ def update_selection():
 
         original_events = load_event_data()[1]
         with open('static/u_of_t_events.json', 'w') as file:
-            json.dump(original_events, file, indent=4)
+            json.dump(original_events, file, indent=4)"""
 
     return jsonify({
         "categories": categories,
         "days": days,
         "colleges": colleges
     })
+
+
+def filter_events(filter_dict: dict) -> list:
+    """
+    """
+    filtered_events = []  # keeps the events after theyre filtered
+    filtered_events_for_front = []  # keeps the evens after they're convereted to a dict
+
+    categories = filter_dict["categories"]
+    days = filter_dict["days"]
+    colleges = filter_dict["colleges"]
+
+    # filter the events if the lists are populated
+    if categories:
+        filtered_events.extend(event_tree.filter_tree(categories))
+
+    if days:
+        filtered_events.extend(event_tree.filter_tree(days))
+
+    if colleges:
+        filtered_events.extend(event_tree.filter_tree(colleges))
+
+    # converts the filtered events to a dict form
+    if filtered_events:
+        for events in filtered_events:
+            event.add_event_dict(
+                filtered_events_for_front,
+                events.name,
+                events.desc,
+                events.location,
+                events.sorting_info,
+                events.post_time,
+                events.image
+
+            )
+
+    print("THE FILTERED EVENTS: ", filtered_events_for_front)
+    return filtered_events_for_front
 
 
 class UserInfoForm(FlaskForm):

@@ -258,7 +258,7 @@
                 $("#resetFilters").click(function(){
                     $('input[type="checkbox"]').prop("checked", false);
 
-                    $.ajax({
+                     $.ajax({
                         type: "POST",
                         url: "/reset-filters",
                         contentType: "application/json",
@@ -266,12 +266,15 @@
                             console.log(response.message);
                          }
 
+
                     });
                 });
 
             });
 
         </script>
+
+
 
     </body>
 </html>
