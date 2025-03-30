@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 
 from charset_normalizer.md import annotations
@@ -151,6 +152,7 @@ def update_selection():
     if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
 
+
     # changes the date of event
     #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
 
@@ -194,7 +196,7 @@ def change_time_readability(unix_events: list) -> list:
     """
         Changes the date of the event from unix stampcode to readable date
     """
-    unix_event_copy = unix_events.copy()
+    unix_event_copy = copy.deepcopy(unix_events)
 
     for normal_event in unix_event_copy:
         if type(normal_event.sorting_info[0]) is int:
