@@ -28,12 +28,6 @@ def create_app():
 app = create_app()
 
 
-@app.route("/get-updated-events", methods=["GET"])
-def get_updated_events():
-    """Returns the updated events as JSON for dynamic frontend updates"""
-    return jsonify([event.to_dict() for event in app.config['EVENT_LIST_READABLE']])
-
-
 @app.route("/", methods=['POST', 'GET'])  # default route
 def index():
     """
@@ -136,6 +130,14 @@ def reset_filters():
     return jsonify({"message": "Filters reset successfully"})
 
 
+@app.route("/get-updated-events", methods=["GET"])
+def get_updated_events():
+    """
+        Returns the updated events as JSON for dynamic frontend updates
+    """
+    return jsonify([event_copy.to_dict() for event_copy in app.config['EVENT_LIST_READABLE']])
+
+
 @app.route("/update-selection", methods=["POST"])
 def update_selection():
     """
@@ -155,10 +157,12 @@ def update_selection():
         app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
         app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
+
     # if no checkboxes are checked set the event list to the original events
     if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
         app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
+
 
     # changes the date of event
     #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
@@ -210,7 +214,7 @@ def change_time_readability(unix_events: list) -> list:
             date = (datetime.fromtimestamp(normal_event.sorting_info[0]).strftime('%b %d, %Y'))
             normal_event.sorting_info = (date, normal_event.sorting_info[1], normal_event.sorting_info[2])
 
-        if normal_event.post_time != 0:
+        if normal_event.post_time != 0 and type(normal_event.post_time) is not str:
             posted_time = datetime.fromtimestamp(normal_event.post_time).strftime('%Y-%m-%d %H:%M:%S')
             normal_event.post_time = posted_time
 
