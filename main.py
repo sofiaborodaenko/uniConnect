@@ -147,7 +147,7 @@ def update_selection():
     app.config['USER_SELECTED_FILTER']["days"] = data.get("days", [])
     app.config['USER_SELECTED_FILTER']["colleges"] = data.get("colleges", [])
 
-    #print(user_selected_filter)
+    print(data)
 
     potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
 

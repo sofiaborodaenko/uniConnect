@@ -19,7 +19,7 @@
                  draggable="false"
                  alt="uniConnect Logo">
 
-            <h1 class="text-3xl text-blue-700 font-light text-center" style="padding: 1rem">
+            <h1 class="select-none text-3xl text-blue-700 font-light text-center" style="padding: 1rem">
                 Uni<span class="text-blue-700 font-bold">Connect</span>
                 <h1 class="text-sm text-blue-700"><sup>TM</sup></h1>
             </h1>
@@ -151,7 +151,7 @@
         </button>
     </form>
 
-    <div class="menu" style="padding:1rem">
+    <div class="menu select-none" style="padding:1rem">
         <div class="item">
             <!-- icons from https://www.flaticon.com/free-icons/week-days -->
             <a class="flex items-center gap-2 sub-btn hover:bg-gray-100 duration-500 rounded-full font-bold px-4 py-2">
@@ -238,10 +238,15 @@
     $('input[type="checkbox"]').change(function(){
         console.log("Checkbox clicked!");
     });
+
+
 </script>
 
 <script>
      $(document).ready(function(){
+
+
+
                 const userFilters = {{ selected_filters | tojson }};
 
 
@@ -288,6 +293,8 @@
                         type: "POST",
                         url: "/update-selection",
                         data: JSON.stringify({
+                            query: "",
+                            sort: "",
                             categories: categories,
                             days: days,
                             colleges: colleges
@@ -297,7 +304,29 @@
                             console.log("Server Response:", response);
 
                             // fetch updated event data from the server
-                            $.ajax({
+                            updateDisplay()
+                        }
+                    });
+                });
+
+
+                $("#resetFilters").click(function(){
+                    $('input[type="checkbox"]').prop("checked", false);
+
+                     $.ajax({
+                        type: "POST",
+                        url: "/reset-filters",
+                        contentType: "application/json",
+                        success: function(response){
+                            console.log(response.message);
+                         }
+
+
+                    });
+                });
+
+                function updateDisplay(){
+                     $.ajax({
                                 type: "GET",
                                 url: "/get-updated-events",
                                 success: function(data){
@@ -340,25 +369,8 @@
                                     });
                                 }
                             });
-                        }
-                    });
-                });
+                }
 
-
-                $("#resetFilters").click(function(){
-                    $('input[type="checkbox"]').prop("checked", false);
-
-                     $.ajax({
-                        type: "POST",
-                        url: "/reset-filters",
-                        contentType: "application/json",
-                        success: function(response){
-                            console.log(response.message);
-                         }
-
-
-                    });
-                });
 
             });
 
