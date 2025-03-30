@@ -160,6 +160,44 @@ class EventTree:
 
             return to_list
 
+def radix_sort_events(events: list[Event], reverse:bool=False) -> list[Event]:
+    """Sort by time of the event"""
+    if not events:
+        return []
+
+    timestamps = [event.post_time for event in events]
+    max_time = max(timestamps)
+
+    exp = 1
+    while max_time // exp > 0:
+        events = _counting_sort_events(events, exp)
+        exp *= 10
+
+    return events[::-1] if reverse else events
+
+def _counting_sort_events(events: list[Event], exp: int) -> list[Event]:
+    """Counting sort to help radix sort"""
+    n = len(events)
+    output = [None]*n
+    count = [0]*10
+
+    for event in events:
+        index = (event.sorting_info[0] // exp) % 10
+        count[index] += 1
+
+    for i in range(1, 10):
+        count[i] += count[i-1]
+
+    for event in reversed(events):
+        index = (event.sorting_info[0] // exp) % 10
+        output[count[index] - 1] = event
+        count[index] -= 1
+
+    return output
+
+def search_event(events: list[Event], query: str) -> list[Event]:
+    return [event for event in events if query.lower() in event.name.lower()]
+
 
 def generate_tree() -> EventTree:
     """
@@ -211,4 +249,8 @@ if __name__ == "__main__":
     b = generate_tree()
     b.print_tree()
 
-    print(b.filter_tree(["Monday"]))
+    filtered_list = b.filter_tree(["Monday"])
+    newest_sorted = radix_sort_events(filtered_list, True)
+    searched_list = search_event(newest_sorted, "le")
+
+    print([x.name for x in searched_list])
