@@ -55,12 +55,12 @@
             <div class="tree">
                 {% for item in  events_list %}
                     {% if item['image'] %}
-                        <div class="node">
+                       <a href="{{ url_for('ind_event', title=item['name']) }}"> <div class="node">
                            <div class="flex">
                               <img class="event-img" src="{{ item['image'] }}">
 
                                <div class="event-text  grid">
-                                    <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}">{{ item['name'] }}</a></strong>
+                                    <strong class="event-name">{{ item['name'] }}</strong>
                                     <p>{{ item['sorting_info'][2]}}</p>
                                     {% if item['location'] %}
                                         <p class="event-location">{{ item['location'] }}</p>
@@ -77,11 +77,11 @@
                                </div>
                             </div>
 
-                        </div>
+                        </div></a>
 
                     {% else %}
-                        <div class="node">
-                            <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}">{{ item['name'] }} </a></strong>
+                       <a href="{{ url_for('ind_event', title=item['name']) }}"> <div class="node">
+                            <strong class="event-name">{{ item['name'] }} </strong>
                             <p>{{ item['sorting_info'][2]}}</p>
 
                             {% if item['location'] %}
@@ -94,7 +94,7 @@
                                 <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
                             {% endif %}
                             <p>{{ item['desc'] }}</p>
-                        </div>
+                        </div> </a>
 
                     {% endif %}
 
@@ -171,8 +171,7 @@
             </div>
             {% endblock %}
 
-
-        <!-- jquery cdn link -->
+<!-- jquery cdn link -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script>
             // makes the
@@ -195,23 +194,23 @@
 
         <script>
             $(document).ready(function(){
+                const userFilters = {{ selected_filters | tojson }};
 
-                $.getJSON("static/user_selected_filters.json", function(data){
-                    if (data) {
-                        $('input[type="checkbox"]').each(function(){
-                            let checkboxValue = $(this).val();
-                            let checkboxName = $(this).attr("name");
 
-                            if ((checkboxName == "category-checkbox" && data.categories.includes(checkboxValue)) ||
-                                (checkboxName == "week-checkbox" && data.days.includes(checkboxValue)) ||
-                                (checkboxName == "college-checkbox" && data.colleges.includes(checkboxValue))) {
+                if (userFilters) {
+                    $('input[type="checkbox"]').each(function(){
+                        let checkboxValue = $(this).val();
+                        let checkboxName = $(this).attr("name");
 
-                                $(this).prop("checked", true);
-                            }
+                        if ((checkboxName == "category-checkbox" && userFilters.categories.includes(checkboxValue)) ||
+                            (checkboxName == "week-checkbox" && userFilters.days.includes(checkboxValue)) ||
+                            (checkboxName == "college-checkbox" && userFilters.colleges.includes(checkboxValue))) {
 
-                        });
-                    }
-                });
+                            $(this).prop("checked", true);  // Pre-select the checkboxes based on the global dictionary
+                        }
+                    });
+                }
+
 
                 // for toggling the sub-menus
                 $('.sub-btn').click(function(){
@@ -273,6 +272,7 @@
             });
 
         </script>
+
 
 
 

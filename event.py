@@ -36,6 +36,18 @@ class Event:
         self.post_time = post_time
         self.image = image
 
+    def to_dict(self):
+        """
+            Returns the event's details in a dictionary
+        """
+
+        return {"name": self.name,
+                "desc": self.desc,
+                "location": self.location,
+                "sorting_info": self.sorting_info,
+                "post_time": self.post_time,
+                "image": self.image}
+
 
 class EventTree:
     """Tree to store events [PLEASE PUT IN THE DESCRIPTION FOR THE LAYERS LATER]
