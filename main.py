@@ -1,3 +1,4 @@
+from charset_normalizer.md import annotations
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -7,11 +8,10 @@ import event
 
 
 def create_app():
-    """Factory function to create and configure the Flask app."""
+    """Factory function to create and configure the Flask app"""
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "password"
 
-    # Lazy initialization: Move state inside app initialization
     with app.app_context():
         app.config['EVENT_TREE'] = event.generate_tree()
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
@@ -30,10 +30,8 @@ def index():
     Renders the main page html
     """
     print("index running")
-    #global event_list, user_selected_filter
 
     # if the checkboxes were previously clicked, sends info to the frontend
-    #selected_filters = user_selected_filter or {'categories': [], 'days': [], 'colleges': []}
     selected_filters = app.config['USER_SELECTED_FILTER']
     event_list = app.config['EVENT_LIST']
 
@@ -52,8 +50,8 @@ def index():
 
 def user_form_information() -> dict:
     """
+        Collects the data if the user does the form
     """
-    #global user_data
 
     college = None  # initializes the values of the user form to none
     major = None
@@ -93,14 +91,13 @@ def user_form_information() -> dict:
 
 @app.route('/<string:title>')
 def ind_event(title):
-    #global event_list, user_selected_filter
-
+    """
+        Creates an individual page if the event was clicked on
+    """
     if title == "favicon.ico":
         return "", 204  # return empty response with HTTP 204 (No Content)
 
     individual_event = None
-
-    #selected_filters = user_selected_filter or {'categories': [], 'days': [], 'colleges': []}
 
     selected_filters = app.config['USER_SELECTED_FILTER']
 
@@ -118,9 +115,8 @@ def ind_event(title):
 @app.route("/reset-filters", methods=["POST"])
 def reset_filters():
     """
-    Resets the user_selected_filter.json if the reset filters button is clicked
+        Resets the lists if the reset filter button is clicked
     """
-    #global user_selected_filter, event_list
     app.config['USER_SELECTED_FILTER'] = {"categories": [], "days": [], "colleges": []}
 
     app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
@@ -131,9 +127,8 @@ def reset_filters():
 @app.route("/update-selection", methods=["POST"])
 def update_selection():
     """
-
+        Gets the data from the checkboxes from the html and returns the necessary events
     """
-    #global user_selected_filter, event_list
     data = request.get_json()
 
     app.config['USER_SELECTED_FILTER']["categories"] = data.get("categories", [])
@@ -145,7 +140,7 @@ def update_selection():
     potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
 
     if potential_filtered_events:
-        app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
+        app.config['EVENT_LIST'] = potential_filtered_events  # stores a list of dict of filtered events
 
     if not app.config['EVENT_LIST']:
         app.config['EVENT_LIST'] = app.config['EVENT_LIST'].events_to_list()
@@ -163,6 +158,8 @@ def update_selection():
 
 def filter_events(filter_dict: dict) -> list:
     """
+        Given the dictionary containing the clicked on checkboxes, goes through the events and
+        returns a list of the new events if they exist
     """
     filtered_events = []  # keeps the events after theyre filtered
 
