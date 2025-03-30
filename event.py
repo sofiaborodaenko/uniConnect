@@ -137,7 +137,7 @@ class EventTree:
                 potential_events = [cur]
                 while potential_events:
                     event = potential_events.pop(0)
-                    if event.root and event.root.name not in filter_tags:
+                    if not event.subtrees:
                         filtered_events.append(event.root)
                     potential_events.extend(event.subtrees)
             else:
@@ -211,4 +211,4 @@ if __name__ == "__main__":
     b = generate_tree()
     b.print_tree()
 
-    print(b.filter_tree(["Woodsworth College"]))
+    print(b.filter_tree(["Monday"]))
