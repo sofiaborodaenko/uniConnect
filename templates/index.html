@@ -98,10 +98,10 @@
                     <div class="event-text grid">
                         <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}"
                                                       class="hover:underline">{{ item['name'] }}</a></strong>
-                        <p>{{ item['sorting_info'][2]}}</p>
+                        <p class="college-name">{{ item['sorting_info'][2]}}</p>
 
                         {% if item['post_time'] != 0 %}
-                        <p class="event-location">Posted on {{ item['post_time'] }}</p>
+                        <p class="event-posted">Posted on {{ item['post_time'] }}</p>
                         {% endif %}
 
                         {% if item['location'] %}
@@ -118,7 +118,7 @@
                 {% else %}
                 <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}"
                                               class="hover:underline">{{ item['name'] }}</a></strong>
-                <p>{{ item['sorting_info'][2]}}</p>
+                <p class="college-name">{{ item['sorting_info'][2]}}</p>
 
                 {% if item['location'] %}
                 <p class="event-location">{{ item['location'] }}</p>
@@ -127,7 +127,7 @@
                 <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
                 {% if item['post_time'] != 0 %}
-                <p class="event-location">Posted on {{ item['post_time'] }}</p> </br>
+                <p class="event-posted">Posted on {{ item['post_time'] }}</p> </br>
                 {% endif %}
                 <p>{{ item['desc'] }}</p>
                 {% endif %}
@@ -319,8 +319,8 @@
                                                             <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
                                                                     class="hover:underline">${item.name}</a></strong>
 
-                                                            <p>${item.sorting_info[2]}</p>
-                                                            ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
+                                                            <p class="college-name">${item.sorting_info[2]}</p>
+                                                            ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p>` : ""}
                                                             ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
                                                             <p class="event-location">${item.sorting_info[0]}</p> </br>
 

@@ -14,10 +14,10 @@
               <img class="ind-event-img rounded-lg object-cover" src="{{ individual_event['image'] }}">
               <div class="ind-event-text grid">
                   <strong class="event-name">{{ individual_event['name'] }}</strong>
-                  <p>{{ individual_event['sorting_info'][2]}}</p></br>
+                  <p class="college-name">{{ individual_event['sorting_info'][2]}}</p></br>
 
                   {% if individual_event['post_time'] != 0 %}
-                      <p class="event-location">Posted on {{ individual_event['post_time'] }}</p> </br>
+                      <p class="event-posted">Posted on {{ individual_event['post_time'] }}</p> </br>
                   {% endif %}
 
                   {% if individual_event['location'] %}

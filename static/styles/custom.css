@@ -88,9 +88,17 @@
     font-size:1.6rem;
 }
 
-.event-location {
-    font-size: 0.8rem;
+.college-name {
+    font-size: 1.2rem;
+}
 
+.event-location {
+    font-size: 1rem;
+
+}
+
+.event-posted {
+    font-size: 0.7rem;
 }
 
 .event-short-desc {
@@ -99,5 +107,3 @@
     -webkit-line-clamp: 2;  /* Number of lines displayed before it truncate */
      overflow: hidden;
 }
-
-
