@@ -123,7 +123,7 @@
 <div class="side-bar h-screen overflow-y-auto sticky top-0 py-4 px-2 bg-white border-r border-gray-200">
     <!-- menu items -->
     <form class="sticky top-0 z-10 bg-white pt-4 pb-2 border-b border-gray-200">
-        <button type="submit" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+        <button type="submit" name="reset" id="resetFilters" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
             Reset Filters
         </button>
     </form>
@@ -218,67 +218,83 @@
 </script>
 
 <script>
-    $(document).ready(function(){
+     $(document).ready(function(){
+                const userFilters = {{ selected_filters | tojson }};
 
 
-        // for toggling the sub-menus
-        $('.sub-btn').click(function(){
-            $(this).next('.sub-menu').slideToggle();
-            $(this).find('.dropdown').toggleClass('rotate');
-        });
+                if (userFilters) {
+                    $('input[type="checkbox"]').each(function(){
+                        let checkboxValue = $(this).val();
+                        let checkboxName = $(this).attr("name");
 
-        $('input[type="checkbox"]').change(function(){
-            let categories = [];
-            let days = [];
-            let colleges = [];
+                        if ((checkboxName == "category-checkbox" && userFilters.categories.includes(checkboxValue)) ||
+                            (checkboxName == "week-checkbox" && userFilters.days.includes(checkboxValue)) ||
+                            (checkboxName == "college-checkbox" && userFilters.colleges.includes(checkboxValue))) {
 
-            $('input[type="checkbox"]:checked').each(function(){
-                let value = $(this).val();
-                let name = $(this).attr("name");
-
-                if (name == "category-checkbox") {
-                    categories.push(value);
-                } else if (name == "week-checkbox") {
-                    days.push(value);
-                } else if (name == "college-checkbox") {
-                    colleges.push(value);
+                            $(this).prop("checked", true);  // Pre-select the checkboxes based on the global dictionary
+                        }
+                    });
                 }
 
+
+                // for toggling the sub-menus
+                $('.sub-btn').click(function(){
+                    $(this).next('.sub-menu').slideToggle();
+                    $(this).find('.dropdown').toggleClass('rotate');
+                });
+
+                $('input[type="checkbox"]').change(function(){
+                    let categories = [];
+                    let days = [];
+                    let colleges = [];
+
+                    $('input[type="checkbox"]:checked').each(function(){
+                        let value = $(this).val();
+                        let name = $(this).attr("name");
+
+                        if (name == "category-checkbox") {
+                            categories.push(value);
+                        } else if (name == "week-checkbox") {
+                            days.push(value);
+                        } else if (name == "college-checkbox") {
+                            colleges.push(value);
+                        }
+
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/update-selection",
+                        data: JSON.stringify({
+                            categories: categories,
+                            days: days,
+                            colleges: colleges
+                        }),
+                        contentType: "application/json",
+                        success: function(response){
+                            console.log("Server Response:", response);
+                            location.reload();
+                        }
+                    });
+
+                });
+
+                $("#resetFilters").click(function(){
+                    $('input[type="checkbox"]').prop("checked", false);
+
+                     $.ajax({
+                        type: "POST",
+                        url: "/reset-filters",
+                        contentType: "application/json",
+                        success: function(response){
+                            console.log(response.message);
+                         }
+
+
+                    });
+                });
+
             });
-
-            $.ajax({
-                type: "POST",
-                url: "/update-selection",
-                data: JSON.stringify({
-                    categories: categories,
-                    days: days,
-                    colleges: colleges
-                }),
-                contentType: "application/json",
-                success: function(response){
-                    console.log("Server Response:", response);
-                    location.reload();
-                }
-            });
-
-        });
-
-        $("#resetFilters").click(function(){
-            $('input[type="checkbox"]').prop("checked", false);
-
-             $.ajax({
-                type: "POST",
-                url: "/reset-filters",
-                contentType: "application/json",
-                success: function(response){
-                    console.log(response.message);
-                 }
-
-
-            });
-        });
-
-    });
 
 </script>
 
