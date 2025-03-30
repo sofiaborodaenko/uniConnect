@@ -159,13 +159,10 @@ def update_selection():
     app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
     app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
-    print([x.name[:6] for x in app.config['EVENT_LIST_READABLE']])
-
     # if no checkboxes are checked set the event list to the original events
     if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
         app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
-    print([x.name[:6] for x in app.config['EVENT_LIST_READABLE']])
     # changes the date of event
     #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
 
@@ -208,17 +205,12 @@ def filter_events(filter_dict: dict) -> list:
     if not days and not categories and not colleges:
         filtered_events = app.config['EVENT_TREE'].events_to_list()
 
-    print([x.name[:5] for x in filtered_events])
-
     if query:
         filtered_events = event.search_event(filtered_events, query)
-
-    print([x.name[:5] for x in filtered_events])
 
     if sort:
         filtered_events = event.radix_sort_events(filtered_events, sort)
 
-    print([x.name[:5] for x in filtered_events])
 
     #print("THE FILTERED EVENTS: ", filtered_events_for_front)
     return filtered_events
