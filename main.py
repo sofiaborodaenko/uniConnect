@@ -148,7 +148,7 @@ def update_selection():
         app.config['EVENT_LIST'] = potential_filtered_events  # stores a list of dict of filtered events
 
     # if no checkboxes are checked set the event list to the original events
-    if app.config['USER_SELECTED_FILTER']["categories"] == [] and app.config['USER_SELECTED_FILTER']["days"] == [] and app.config['USER_SELECTED_FILTER']["colleges"] == []:
+    if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
 
     # changes the date of event
