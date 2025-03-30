@@ -339,34 +339,44 @@
                             data.forEach(function(item){
                                 let eventHtml = `
                                     <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
-                                        <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
-                                            ${item.image ? `
-                                            <div class="flex">
-                                                <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
-                                                    src="${item.image}">
-                                                <div class="event-text grid">
-                                                    <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
-                                                            class="hover:underline">${item.name}</a></strong>
-
-                                                    <p>${item.sorting_info[2]}</p>
-                                                    ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
-                                                    ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
-                                                    <p class="event-location">${item.sorting_info[0]}</p> </br>
-
-                                                    <p class="event-short-desc">${item.desc}</p>
-                                                </div>
-                                            </div>` : `
-                                            <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                    <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
+                                        ${item.image ? `
+                                        <div class="flex">
+                                            <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
+                                                src="${item.image}">
+                                            <div class="event-text grid">
+                                                <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
                                                     class="hover:underline">${item.name}</a></strong>
-                                            <p>${item.sorting_info[2]}</p>
-                                            ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
-                                            ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
-                                            <p class="event-location">${item.sorting_info[0]}</p> </br>
+                                                <p class="college-name">${item.sorting_info[2]}</p>
 
-                                            <p>${item.desc}</p>
-                                            `}
-                                        </a>
-                                    </div>
+                                                ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p>` : ''}
+
+                                                ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
+
+                                                <p class="event-location">${item.sorting_info[0]}</p></br>
+
+                                                <p class="event-location">${item.sorting_info[1]}</p> </br>
+
+                                                <p class="event-short-desc">${item.desc}</p>
+                                            </div>
+                                        </div>` : `
+                                        <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                            class="hover:underline">${item.name}</a></strong>
+                                        <p class="college-name">${item.sorting_info[2]}</p>
+
+                                        ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p> </br>` : ''}
+
+                                        ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
+
+                                        <p class="event-location">${item.sorting_info[0]}</p> </br>
+
+                                        <p class="event-location">${item.sorting_info[1]}</p> </br>
+
+                                        <p>${item.desc}</p>
+                                        `}
+                                    </a>
+                                </div>
+
                                 `;
                                 eventContainer.append(eventHtml);
                             });
