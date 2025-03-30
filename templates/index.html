@@ -318,9 +318,11 @@
                                                         <div class="event-text grid">
                                                             <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
                                                                     class="hover:underline">${item.name}</a></strong>
+
                                                             <p>${item.sorting_info[2]}</p>
+                                                            ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
                                                             ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
-                                                            <p class="event-location">${item.sorting_info[0]}</p>
+                                                            <p class="event-location">${item.sorting_info[0]}</p> </br>
 
                                                             <p class="event-short-desc">${item.desc}</p>
                                                         </div>
@@ -328,9 +330,10 @@
                                                     <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
                                                             class="hover:underline">${item.name}</a></strong>
                                                     <p>${item.sorting_info[2]}</p>
-                                                  ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
-                                                    <p class="event-location">${item.sorting_info[0]}</p>
                                                     ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
+                                                    ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
+                                                    <p class="event-location">${item.sorting_info[0]}</p> </br>
+
                                                     <p>${item.desc}</p>
                                                     `}
                                                 </a>
