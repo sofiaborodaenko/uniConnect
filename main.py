@@ -28,12 +28,6 @@ def create_app():
 app = create_app()
 
 
-@app.route("/get-updated-events", methods=["GET"])
-def get_updated_events():
-    """Returns the updated events as JSON for dynamic frontend updates"""
-    return jsonify([event.to_dict() for event in app.config['EVENT_LIST_READABLE']])
-
-
 @app.route("/", methods=['POST', 'GET'])  # default route
 def index():
     """
@@ -134,6 +128,14 @@ def reset_filters():
     app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
 
     return jsonify({"message": "Filters reset successfully"})
+
+
+@app.route("/get-updated-events", methods=["GET"])
+def get_updated_events():
+    """
+        Returns the updated events as JSON for dynamic frontend updates
+    """
+    return jsonify([event_copy.to_dict() for event_copy in app.config['EVENT_LIST_READABLE']])
 
 
 @app.route("/update-selection", methods=["POST"])
