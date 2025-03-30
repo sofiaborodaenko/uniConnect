@@ -203,7 +203,7 @@ def change_time_readability(unix_events: list) -> list:
 
         if normal_event.post_time != 0:
             posted_time = datetime.fromtimestamp(normal_event.post_time).strftime('%Y-%m-%d %H:%M:%S')
-            normal_event.posted_time = posted_time
+            normal_event.post_time = posted_time
 
     return unix_event_copy
 
