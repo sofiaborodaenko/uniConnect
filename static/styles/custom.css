@@ -23,24 +23,7 @@
     cursor: pointer;
 }
 
-.tree-container {
-    position: absolute;
-    bottom: 0;
-    right:0;
-    top: 6.25rem;
-    width: calc(100vw - 15.6rem);
-    opacity: 100;
-    overflow-y: auto;
 
-}
-
-.tree {
-    max-width: 90%;
-    min-width: 90%;
-    position: absolute;
-    left: 5%;
-
-}
 
 .node {
     padding: 2rem;
@@ -64,14 +47,11 @@
 .event-img {
     max-width: 18rem;
     max-height: 18rem;
-    object-fit: contain;
 }
 
 .ind-event-img {
     max-width: 30rem;
     max-height: 30;
-    object-fit: contain;
-
 }
 
 .ind-content {
@@ -119,3 +99,5 @@
     -webkit-line-clamp: 2;  /* Number of lines displayed before it truncate */
      overflow: hidden;
 }
+
+

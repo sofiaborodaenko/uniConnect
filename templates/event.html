@@ -11,7 +11,7 @@
 {% if individual_event['image'] %}
     <div class="event-node">
           <div class="ind-content flex">
-              <img class="ind-event-img" src="{{ individual_event['image'] }}">
+              <img class="ind-event-img rounded-lg object-cover" src="{{ individual_event['image'] }}">
               <div class="ind-event-text grid">
                   <strong class="event-name">{{ individual_event['name'] }}</strong>
                   <p>{{ individual_event['sorting_info'][2]}}</p>
