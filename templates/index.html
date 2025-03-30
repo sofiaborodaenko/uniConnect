@@ -40,7 +40,6 @@
                     <option value="">Sort by</option>
                     <option value="new">Date: New to Old</option>
                     <option value="old">Date: Old to New</option>
-                    <option value="alphabet">Alphabetical</option>
                 </select>
             </div>
         </div>
@@ -165,7 +164,7 @@
                 <form method="POST" action="/">
                     {% for category in ["Free Food", "Social", "Sports", "Academic", "Career", "Financial Help", "Mental
                     Health", "Health", "Outdoor Adventure"] %}
-                    <li><input id="{{category}}-checkbox" type="checkbox" value="{{category}}" name="category-checkbox">
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{category}}-checkbox" type="checkbox" value="{{category}}" name="category-checkbox">
                         <label for="{{category}}-checkbox"
                                class="ms-2 text-sm font-medium text-gray-900">{{category}}</label>
                     </li>
@@ -184,7 +183,7 @@
             <div class="sub-menu">
                 <form method="POST" action="/">
                     {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
-                    <li><input id="{{day}}-checkbox" type="checkbox" value="{{day}}" name="week-checkbox">
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{day}}-checkbox" type="checkbox" value="{{day}}" name="week-checkbox">
                         <label for="{{day}}-checkbox" class="ms-2 text-sm font-medium text-gray-900">{{day}}</label>
                     </li>
                     {% endfor %}
@@ -203,9 +202,9 @@
                 <form method="POST" action="/">
                     {% for college in ["Innis College", "New College", "Trinity College", "University College",
                     "Victoria College", "Woodsworth College"] %}
-                    <li><input id="{{college}}-checkbox" type="checkbox" value="{{college}}" name="college-checkbox">
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{college}}-checkbox" type="checkbox" value="{{college}}" name="college-checkbox">
                         <label for="{{college}}-checkbox"
-                               class="ms-2 text-sm font-medium text-gray-900">{{college}}</label>
+                               class=" ms-2 text-sm font-medium text-gray-900">{{college}}</label>
                     </li>
                     {% endfor %}
                 </form>
@@ -266,116 +265,111 @@
 
 
                 // for toggling the sub-menus
-                $('.sub-btn').click(function(){
-                    $(this).next('.sub-menu').slideToggle();
-                    $(this).find('.dropdown').toggleClass('rotate');
-                });
+                 $('.sub-btn').click(function(){
+            $(this).next('.sub-menu').slideToggle();
+        });
 
-                $('input[type="checkbox"]').change(function(){
-                    let categories = [];
-                    let days = [];
-                    let colleges = [];
+        // search
+        $('#search-button').click(performSearch);
+        $('#search-bar').keypress(function(e){
+            if(e.which == 13) performSearch();
+        });
 
-                    $('input[type="checkbox"]:checked').each(function(){
-                        let value = $(this).val();
-                        let name = $(this).attr("name");
+        // sort
+        $('#filter-dropdown').change(performSort);
 
-                        if (name == "category-checkbox") {
-                            categories.push(value);
-                        } else if (name == "week-checkbox") {
-                            days.push(value);
-                        } else if (name == "college-checkbox") {
-                            colleges.push(value);
-                        }
-                    });
+        // filter
+        $('input[type="checkbox"]').change(updateFilters);
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/update-selection",
-                        data: JSON.stringify({
-                            query: "",
-                            sort: "",
-                            categories: categories,
-                            days: days,
-                            colleges: colleges
-                        }),
-                        contentType: "application/json",
-                        success: function(response){
-                            console.log("Server Response:", response);
+        // reset
+        $("#resetFilters").click(function(e){
+            e.preventDefault();
+            $('input[type="checkbox"]').prop("checked", false);
+            $('#search-bar').val('');
+            $('#filter-dropdown').val('');
+            updateFilters();
+        });
 
-                            // fetch updated event data from the server
-                            updateDisplay()
-                        }
-                    });
-                });
+        function performSearch() {
+            updateFilters();
+        }
 
+        function performSort() {
+            updateFilters();
+        }
 
-                $("#resetFilters").click(function(){
-                    $('input[type="checkbox"]').prop("checked", false);
+        function updateFilters() {
+            const filters = {
+                query: $('#search-bar').val().trim(),
+                sort: $('#filter-dropdown').val(),
+                categories: $('input[name="category-checkbox"]:checked').map((i,e) => e.value).get(),
+                days: $('input[name="week-checkbox"]:checked').map((i,e) => e.value).get(),
+                colleges: $('input[name="college-checkbox"]:checked').map((i,e) => e.value).get()
+            };
 
-                     $.ajax({
-                        type: "POST",
-                        url: "/reset-filters",
-                        contentType: "application/json",
-                        success: function(response){
-                            console.log(response.message);
-                         }
+            $.ajax({
+                type: "POST",
+                url: "/update-selection",
+                data: JSON.stringify(filters),
+                contentType: "application/json",
+                success: function(response){
+                    updateDisplay();
+                }
+            });
+        }
 
 
-                    });
-                });
+        function updateDisplay(){
+             $.ajax({
+                        type: "GET",
+                        url: "/get-updated-events",
+                        success: function(data){
+                            console.log("Updated Events:", data);
 
-                function updateDisplay(){
-                     $.ajax({
-                                type: "GET",
-                                url: "/get-updated-events",
-                                success: function(data){
-                                    console.log("Updated Events:", data);
+                            let eventContainer = $(".tree-container .tree");
+                            eventContainer.empty(); // clear existing events
 
-                                    let eventContainer = $(".tree-container .tree");
-                                    eventContainer.empty(); // clear existing events
-
-                                    // append new events dynamically
-                                    data.forEach(function(item){
-                                        let eventHtml = `
-                                            <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
-                                                <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
-                                                    ${item.image ? `
-                                                    <div class="flex">
-                                                        <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
-                                                            src="${item.image}">
-                                                        <div class="event-text grid">
-                                                            <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
-                                                                    class="hover:underline">${item.name}</a></strong>
-
-                                                            <p>${item.sorting_info[2]}</p>
-                                                            ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
-                                                            ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
-                                                            <p class="event-location">${item.sorting_info[0]}</p> </br>
-
-                                                            <p class="event-short-desc">${item.desc}</p>
-                                                        </div>
-                                                    </div>` : `
+                            // append new events dynamically
+                            data.forEach(function(item){
+                                let eventHtml = `
+                                    <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
+                                        <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
+                                            ${item.image ? `
+                                            <div class="flex">
+                                                <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
+                                                    src="${item.image}">
+                                                <div class="event-text grid">
                                                     <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
                                                             class="hover:underline">${item.name}</a></strong>
+
                                                     <p>${item.sorting_info[2]}</p>
                                                     ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
                                                     ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
                                                     <p class="event-location">${item.sorting_info[0]}</p> </br>
 
-                                                    <p>${item.desc}</p>
-                                                    `}
-                                                </a>
-                                            </div>
-                                        `;
-                                        eventContainer.append(eventHtml);
-                                    });
-                                }
+                                                    <p class="event-short-desc">${item.desc}</p>
+                                                </div>
+                                            </div>` : `
+                                            <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                                    class="hover:underline">${item.name}</a></strong>
+                                            <p>${item.sorting_info[2]}</p>
+                                            ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
+                                            ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
+                                            <p class="event-location">${item.sorting_info[0]}</p> </br>
+
+                                            <p>${item.desc}</p>
+                                            `}
+                                        </a>
+                                    </div>
+                                `;
+                                eventContainer.append(eventHtml);
                             });
-                }
+                        }
+                    });
+            }
 
 
-            });
+     });
 
 </script>
 

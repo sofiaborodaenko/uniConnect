@@ -148,22 +148,24 @@ def update_selection():
     app.config['USER_SELECTED_FILTER']["categories"] = data.get("categories", [])
     app.config['USER_SELECTED_FILTER']["days"] = data.get("days", [])
     app.config['USER_SELECTED_FILTER']["colleges"] = data.get("colleges", [])
+    app.config['USER_SELECTED_FILTER']["query"] = data.get("query", "")
+    app.config['USER_SELECTED_FILTER']["sort"] = data.get("sort", "")
 
-    print(data)
+
 
     potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
 
-    if potential_filtered_events:
-        app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
-        app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
+    app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
+    app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
+
+    print([x.name[:6] for x in app.config['EVENT_LIST_READABLE']])
 
     # if no checkboxes are checked set the event list to the original events
     if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
-        app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
         app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
-
+    print([x.name[:6] for x in app.config['EVENT_LIST_READABLE']])
     # changes the date of event
     #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
 
@@ -174,7 +176,9 @@ def update_selection():
     return jsonify({
         "categories": app.config['USER_SELECTED_FILTER']["categories"],
         "days": app.config['USER_SELECTED_FILTER']["days"],
-        "colleges": app.config['USER_SELECTED_FILTER']["colleges"]
+        "colleges": app.config['USER_SELECTED_FILTER']["colleges"],
+        "query": app.config['USER_SELECTED_FILTER']["query"],
+        "sort": app.config['USER_SELECTED_FILTER']["sort"]
     })
 
 
@@ -183,11 +187,13 @@ def filter_events(filter_dict: dict) -> list:
         Given the dictionary containing the clicked on checkboxes, goes through the events and
         returns a list of the new events if they exist
     """
-    filtered_events = []  # keeps the events after theyre filtered
+    filtered_events = [] # keeps the events after theyre filtered
 
     categories = filter_dict["categories"]
     days = filter_dict["days"]
     colleges = filter_dict["colleges"]
+    query = filter_dict["query"]
+    sort = filter_dict["sort"]
 
     # filter the events if the lists are populated
     if categories:
@@ -198,6 +204,21 @@ def filter_events(filter_dict: dict) -> list:
 
     if colleges:
         filtered_events.extend(app.config['EVENT_TREE'].filter_tree(colleges))
+
+    if not days and not categories and not colleges:
+        filtered_events = app.config['EVENT_TREE'].events_to_list()
+
+    print([x.name[:5] for x in filtered_events])
+
+    if query:
+        filtered_events = event.search_event(filtered_events, query)
+
+    print([x.name[:5] for x in filtered_events])
+
+    if sort:
+        filtered_events = event.radix_sort_events(filtered_events, sort)
+
+    print([x.name[:5] for x in filtered_events])
 
     #print("THE FILTERED EVENTS: ", filtered_events_for_front)
     return filtered_events

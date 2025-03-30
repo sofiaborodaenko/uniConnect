@@ -160,7 +160,7 @@ class EventTree:
 
             return to_list
 
-def radix_sort_events(events: list[Event], reverse:bool=False) -> list[Event]:
+def radix_sort_events(events: list[Event], method: str) -> list[Event]:
     """Sort by time of the event"""
     if not events:
         return []
@@ -173,7 +173,12 @@ def radix_sort_events(events: list[Event], reverse:bool=False) -> list[Event]:
         events = _counting_sort_events(events, exp)
         exp *= 10
 
-    return events[::-1] if reverse else events
+    if method == "new":
+        return events[::-1]
+    elif method == "old":
+        return events
+
+    return events
 
 def _counting_sort_events(events: list[Event], exp: int) -> list[Event]:
     """Counting sort to help radix sort"""
