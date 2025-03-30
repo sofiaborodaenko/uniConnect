@@ -137,7 +137,7 @@ class EventTree:
                 potential_events = [cur]
                 while potential_events:
                     event = potential_events.pop(0)
-                    if event.root and event.root.name not in filter_tags:
+                    if not event.subtrees:
                         filtered_events.append(event.root)
                     potential_events.extend(event.subtrees)
             else:

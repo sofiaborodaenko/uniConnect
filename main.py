@@ -142,8 +142,10 @@ def update_selection():
 
     #print(user_selected_filter)
 
-    app.config['EVENT_LIST'] = filter_events(
-        app.config['USER_SELECTED_FILTER'])  # stores a list of dict of filtered events
+    potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
+
+    if potential_filtered_events:
+        app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
 
     if not app.config['EVENT_LIST']:
         app.config['EVENT_LIST'] = app.config['EVENT_LIST'].events_to_list()
