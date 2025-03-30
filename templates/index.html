@@ -108,7 +108,9 @@
                         <p class="event-location">{{ item['location'] }}</p>
                         {% endif %}
 
-                        <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
+                        <p class="event-location">{{ item['sorting_info'][0] }}</p></br>
+
+                        <p class="event-location">{{ item['sorting_info'][1] }} </p> </br>
 
 
 
@@ -120,15 +122,19 @@
                                               class="hover:underline">{{ item['name'] }}</a></strong>
                 <p class="college-name">{{ item['sorting_info'][2]}}</p>
 
+                {% if item['post_time'] != 0 %}
+                <p class="event-posted">Posted on {{ item['post_time'] }}</p> </br>
+                {% endif %}
+
                 {% if item['location'] %}
                 <p class="event-location">{{ item['location'] }}</p>
                 {% endif %}
 
                 <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
-                {% if item['post_time'] != 0 %}
-                <p class="event-posted">Posted on {{ item['post_time'] }}</p> </br>
-                {% endif %}
+                <p class="event-location">{{ item['sorting_info'][1] }} </p> </br>
+
+
                 <p>{{ item['desc'] }}</p>
                 {% endif %}
             </a>
@@ -332,7 +338,8 @@
                                                     <p>${item.sorting_info[2]}</p>
                                                     ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
                                                     ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
-                                                    <p class="event-location">${item.sorting_info[0]}</p> </br>
+                                                    <p class="event-location">${item.sorting_info[0]}</p></br>
+                                                    <p class="event-location">${item['sorting_info'][1]}</p> </br>
 
                                                     <p>${item.desc}</p>
                                                     `}
