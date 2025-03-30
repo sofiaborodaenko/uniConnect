@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -7,13 +5,23 @@ from wtforms.validators import DataRequired
 import json
 import event
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = "password"
 
-event_tree = event.generate_tree()
-event_list = event_tree.events_to_list()
-user_selected_filter = {}
-user_data = {}
+def create_app():
+    """Factory function to create and configure the Flask app."""
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = "password"
+
+    # Lazy initialization: Move state inside app initialization
+    with app.app_context():
+        app.config['EVENT_TREE'] = event.generate_tree()
+        app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
+        app.config['USER_SELECTED_FILTER'] = {'categories': [], 'days': [], 'colleges': []}
+        app.config['USER_DATA'] = {}
+
+    return app
+
+
+app = create_app()
 
 
 @app.route("/", methods=['POST', 'GET'])  # default route
@@ -22,10 +30,12 @@ def index():
     Renders the main page html
     """
     print("index running")
-    global event_list, user_selected_filter
+    #global event_list, user_selected_filter
 
     # if the checkboxes were previously clicked, sends info to the frontend
-    selected_filters = user_selected_filter or {'categories': [], 'days': [], 'colleges': []}
+    #selected_filters = user_selected_filter or {'categories': [], 'days': [], 'colleges': []}
+    selected_filters = app.config['USER_SELECTED_FILTER']
+    event_list = app.config['EVENT_LIST']
 
     print(event_list)
 
@@ -43,7 +53,7 @@ def index():
 def user_form_information() -> dict:
     """
     """
-    global user_data
+    #global user_data
 
     college = None  # initializes the values of the user form to none
     major = None
@@ -72,6 +82,8 @@ def user_form_information() -> dict:
         "preferred categories": preferred_categories
     }
 
+    app.config["USER_DATA"] = user_data
+
     print(user_data)
 
     user_data["form"] = form
@@ -81,17 +93,19 @@ def user_form_information() -> dict:
 
 @app.route('/<string:title>')
 def ind_event(title):
-    global event_list, user_selected_filter
+    #global event_list, user_selected_filter
 
     if title == "favicon.ico":
         return "", 204  # return empty response with HTTP 204 (No Content)
 
     individual_event = None
 
-    selected_filters = user_selected_filter or {'categories': [], 'days': [], 'colleges': []}
+    #selected_filters = user_selected_filter or {'categories': [], 'days': [], 'colleges': []}
+
+    selected_filters = app.config['USER_SELECTED_FILTER']
 
     # iterates through the list
-    for page in event_list:
+    for page in app.config["EVENT_LIST"]:
         if page.name == title:  # once event is found sets it to the variable
             individual_event = page.to_dict()
             print("PAGE", individual_event)
@@ -106,10 +120,10 @@ def reset_filters():
     """
     Resets the user_selected_filter.json if the reset filters button is clicked
     """
-    global user_selected_filter, event_list
-    user_selected_filter = {"categories": [], "days": [], "colleges": []}
+    #global user_selected_filter, event_list
+    app.config['USER_SELECTED_FILTER'] = {"categories": [], "days": [], "colleges": []}
 
-    event_list = event_tree.events_to_list()
+    app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
 
     return jsonify({"message": "Filters reset successfully"})
 
@@ -119,28 +133,29 @@ def update_selection():
     """
 
     """
-    global user_selected_filter, event_list
+    #global user_selected_filter, event_list
     data = request.get_json()
 
-    user_selected_filter["categories"] = data.get("categories", [])
-    user_selected_filter["days"] = data.get("days", [])
-    user_selected_filter["colleges"] = data.get("colleges", [])
+    app.config['USER_SELECTED_FILTER']["categories"] = data.get("categories", [])
+    app.config['USER_SELECTED_FILTER']["days"] = data.get("days", [])
+    app.config['USER_SELECTED_FILTER']["colleges"] = data.get("colleges", [])
 
-    print(user_selected_filter)
+    #print(user_selected_filter)
 
-    event_list = filter_events(user_selected_filter)  # stores a list of dict of filtered events
+    app.config['EVENT_LIST'] = filter_events(
+        app.config['USER_SELECTED_FILTER'])  # stores a list of dict of filtered events
 
-    if not event_list:
-        event_list = event_tree.events_to_list()
+    if not app.config['EVENT_LIST']:
+        app.config['EVENT_LIST'] = app.config['EVENT_LIST'].events_to_list()
 
-    print("selected categories:", user_selected_filter["categories"])
-    print("selected days:", user_selected_filter["days"])
-    print("selected colleges:", user_selected_filter["colleges"])
+    #print("selected categories:", user_selected_filter["categories"])
+    #print("selected days:", user_selected_filter["days"])
+    #print("selected colleges:", user_selected_filter["colleges"])
 
     return jsonify({
-        "categories": user_selected_filter["categories"],
-        "days": user_selected_filter["days"],
-        "colleges": user_selected_filter["colleges"]
+        "categories": app.config['USER_SELECTED_FILTER']["categories"],
+        "days": app.config['USER_SELECTED_FILTER']["days"],
+        "colleges": app.config['USER_SELECTED_FILTER']["colleges"]
     })
 
 
@@ -155,13 +170,13 @@ def filter_events(filter_dict: dict) -> list:
 
     # filter the events if the lists are populated
     if categories:
-        filtered_events.extend(event_tree.filter_tree(categories))
+        filtered_events.extend(app.config['EVENT_TREE'].filter_tree(categories))
 
     if days:
-        filtered_events.extend(event_tree.filter_tree(days))
+        filtered_events.extend(app.config['EVENT_TREE'].filter_tree(days))
 
     if colleges:
-        filtered_events.extend(event_tree.filter_tree(colleges))
+        filtered_events.extend(app.config['EVENT_TREE'].filter_tree(colleges))
 
     #print("THE FILTERED EVENTS: ", filtered_events_for_front)
     return filtered_events
@@ -179,5 +194,4 @@ class UserInfoForm(FlaskForm):
 
 
 if __name__ == "__main__":
-
     app.run(debug=True, port=8080)
