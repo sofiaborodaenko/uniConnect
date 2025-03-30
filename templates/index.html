@@ -11,7 +11,7 @@
 </head>
 <body class="font-sans">
 <!--top banner -->
-<div class="header flex border-b-1 border-solid border-gray-200">
+<div class="header flex border-b-1 border-solid border-gray-200 sticky">
     <div class="flex items-center w-full h-full px-10" style="padding: 1rem">
         <div class="flex w-100 items-center">
             <img class="h-12 w-auto object-contain mr-4"
@@ -105,8 +105,8 @@
 
                         <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
-                        {% if item['posted_time'] != 0 %}
-                        <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
+                        {% if item['post_time'] != 0 %}
+                        <p class="event-location">Posted on {{ item['post_time'] }}</p> </br>
                         {% endif %}
 
                         <p class="event-short-desc">{{ item['desc'] }}</p>
@@ -123,8 +123,8 @@
 
                 <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
-                {% if item['posted_time'] != 0 %}
-                <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
+                {% if item['post_time'] != 0 %}
+                <p class="event-location">Posted on {{ item['post_time'] }}</p> </br>
                 {% endif %}
                 <p>{{ item['desc'] }}</p>
                 {% endif %}
