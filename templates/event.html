@@ -14,16 +14,19 @@
               <img class="ind-event-img rounded-lg object-cover" src="{{ individual_event['image'] }}">
               <div class="ind-event-text grid">
                   <strong class="event-name">{{ individual_event['name'] }}</strong>
-                  <p>{{ individual_event['sorting_info'][2]}}</p>
+                  <p>{{ individual_event['sorting_info'][2]}}</p></br>
+
+                  {% if individual_event['post_time'] != 0 %}
+                      <p class="event-location">Posted on {{ individual_event['post_time'] }}</p> </br>
+                  {% endif %}
+
                   {% if individual_event['location'] %}
-                    <p class="event-location">{{ individual_event['location'] }}</p>
+                    <p class="event-location">{{ individual_event['location'] }}</p></br>
                   {% endif %}
 
                   <p class="event-location">{{ individual_event['sorting_info'][0] }}</p> </br>
 
-                  {% if individual_event['posted_time'] != 0 %}
-                      <p class="event-location">Posted on {{ individual_event['posted_time'] }}</p> </br>
-                  {% endif %}
+
 
             </div>
 
@@ -44,8 +47,8 @@
 
       <p class="event-location">{{ individual_event['sorting_info'][0] }}</p> </br>
 
-      {% if individual_event['posted_time'] != 0 %}
-        <p class="event-location">Posted on {{ individual_event['posted_time'] }}</p> </br>
+      {% if individual_event['post_time'] != 0 %}
+        <p class="event-location">Posted on {{ individual_event['post_time'] }}</p> </br>
       {% endif %}
       <p class="event-short-desc">{{ individual_event['desc'] }}</p>
       </div>

@@ -99,15 +99,18 @@
                         <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}"
                                                       class="hover:underline">{{ item['name'] }}</a></strong>
                         <p>{{ item['sorting_info'][2]}}</p>
+
+                        {% if item['post_time'] != 0 %}
+                        <p class="event-location">Posted on {{ item['post_time'] }}</p>
+                        {% endif %}
+
                         {% if item['location'] %}
                         <p class="event-location">{{ item['location'] }}</p>
                         {% endif %}
 
                         <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
-                        {% if item['post_time'] != 0 %}
-                        <p class="event-location">Posted on {{ item['post_time'] }}</p> </br>
-                        {% endif %}
+
 
                         <p class="event-short-desc">{{ item['desc'] }}</p>
                     </div>
@@ -279,7 +282,6 @@
                         } else if (name == "college-checkbox") {
                             colleges.push(value);
                         }
-
                     });
 
                     $.ajax({
@@ -293,11 +295,55 @@
                         contentType: "application/json",
                         success: function(response){
                             console.log("Server Response:", response);
-                            location.reload();
+
+                            // fetch updated event data from the server
+                            $.ajax({
+                                type: "GET",
+                                url: "/get-updated-events",
+                                success: function(data){
+                                    console.log("Updated Events:", data);
+
+                                    let eventContainer = $(".tree-container .tree");
+                                    eventContainer.empty(); // clear existing events
+
+                                    // append new events dynamically
+                                    data.forEach(function(item){
+                                        let eventHtml = `
+                                            <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
+                                                <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
+                                                    ${item.image ? `
+                                                    <div class="flex">
+                                                        <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
+                                                            src="${item.image}">
+                                                        <div class="event-text grid">
+                                                            <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                                                    class="hover:underline">${item.name}</a></strong>
+                                                            <p>${item.sorting_info[2]}</p>
+                                                            ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
+                                                            <p class="event-location">${item.sorting_info[0]}</p>
+
+                                                            <p class="event-short-desc">${item.desc}</p>
+                                                        </div>
+                                                    </div>` : `
+                                                    <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                                            class="hover:underline">${item.name}</a></strong>
+                                                    <p>${item.sorting_info[2]}</p>
+                                                  ${item.location ? `<p class="event-location">${item.location}</p>` : ""}
+                                                    <p class="event-location">${item.sorting_info[0]}</p>
+                                                    ${item.post_time != 0 ? `<p class="event-location">Posted on ${item.post_time}</p>` : ""}
+                                                    <p>${item.desc}</p>
+                                                    `}
+                                                </a>
+                                            </div>
+                                        `;
+                                        eventContainer.append(eventHtml);
+                                    });
+                                }
+                            });
                         }
                     });
-
                 });
+
 
                 $("#resetFilters").click(function(){
                     $('input[type="checkbox"]').prop("checked", false);

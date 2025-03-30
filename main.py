@@ -28,6 +28,12 @@ def create_app():
 app = create_app()
 
 
+@app.route("/get-updated-events", methods=["GET"])
+def get_updated_events():
+    """Returns the updated events as JSON for dynamic frontend updates"""
+    return jsonify([event.to_dict() for event in app.config['EVENT_LIST_READABLE']])
+
+
 @app.route("/", methods=['POST', 'GET'])  # default route
 def index():
     """
@@ -108,7 +114,7 @@ def ind_event(title):
     selected_filters = app.config['USER_SELECTED_FILTER']
 
     # iterates through the list
-    for page in app.config["EVENT_LIST"]:
+    for page in app.config["EVENT_LIST_READABLE"]:
         if page.name == title:  # once event is found sets it to the variable
             individual_event = page.to_dict()
             print("PAGE", individual_event)
@@ -146,12 +152,13 @@ def update_selection():
     potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
 
     if potential_filtered_events:
-        app.config['EVENT_LIST'] = potential_filtered_events  # stores a list of dict of filtered events
+        app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
+        app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
     # if no checkboxes are checked set the event list to the original events
     if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
-
+        app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
     # changes the date of event
     #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
