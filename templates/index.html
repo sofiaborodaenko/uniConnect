@@ -11,7 +11,7 @@
 </head>
 <body class="font-sans">
 <!--top banner -->
-<div class="header flex border-b-1 border-solid border-gray-200">
+<div class="header flex border-b-1 border-solid border-gray-200 sticky">
     <div class="flex items-center w-full h-full p-10" style="padding: 1rem">
         <div class="flex w-full items-center">
             <img class="h-12 w-auto object-contain mr-4"
@@ -25,7 +25,7 @@
             </h1>
         </div>
         <div class="flex items-center justify-end pl-4">
-            <button onclick="toggleMenu()" class="focus:outline-none">
+            <button onclick="toggleMenu()" class="focus:outline-none cursor-pointer">
                 <img class="h-12 w-12 object-cover rounded-full border-2 border-white"
                      src="static/imgs/user-img.png"
                      draggable="false"
@@ -85,8 +85,8 @@
 
                         <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
-                        {% if item['posted_time'] != 0 %}
-                        <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
+                        {% if item['post_time'] != 0 %}
+                            <p class="event-location">Posted on {{ item['post_time'] }}</p> </br>
                         {% endif %}
 
                         <p class="event-short-desc">{{ item['desc'] }}</p>
@@ -103,8 +103,8 @@
 
                 <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
 
-                {% if item['posted_time'] != 0 %}
-                <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
+                {% if item['post_time'] != 0 %}
+                    <p class="event-location">Posted on {{ item['post_time'] }}</p> </br>
                 {% endif %}
                 <p>{{ item['desc'] }}</p>
                 {% endif %}

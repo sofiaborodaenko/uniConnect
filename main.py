@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from charset_normalizer.md import annotations
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
@@ -15,6 +17,7 @@ def create_app():
     with app.app_context():
         app.config['EVENT_TREE'] = event.generate_tree()
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
+        app.config['EVENT_LIST_READABLE'] = app.config['EVENT_LIST']
         app.config['USER_SELECTED_FILTER'] = {'categories': [], 'days': [], 'colleges': []}
         app.config['USER_DATA'] = {}
 
@@ -34,8 +37,10 @@ def index():
     # if the checkboxes were previously clicked, sends info to the frontend
     selected_filters = app.config['USER_SELECTED_FILTER']
     event_list = app.config['EVENT_LIST']
+    #print(event_list)
+    app.config['EVENT_LIST_READABLE'] = change_time_readability(event_list)
 
-    print(event_list)
+    event_list = app.config['EVENT_LIST_READABLE']
 
     form_information = user_form_information()
 
@@ -142,6 +147,13 @@ def update_selection():
     if potential_filtered_events:
         app.config['EVENT_LIST'] = potential_filtered_events  # stores a list of dict of filtered events
 
+    # if no checkboxes are checked set the event list to the original events
+    if app.config['USER_SELECTED_FILTER']["categories"] == [] and app.config['USER_SELECTED_FILTER']["days"] == [] and app.config['USER_SELECTED_FILTER']["colleges"] == []:
+        app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
+
+    # changes the date of event
+    #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
+
     #print("selected categories:", user_selected_filter["categories"])
     #print("selected days:", user_selected_filter["days"])
     #print("selected colleges:", user_selected_filter["colleges"])
@@ -176,6 +188,24 @@ def filter_events(filter_dict: dict) -> list:
 
     #print("THE FILTERED EVENTS: ", filtered_events_for_front)
     return filtered_events
+
+
+def change_time_readability(unix_events: list) -> list:
+    """
+        Changes the date of the event from unix stampcode to readable date
+    """
+    unix_event_copy = unix_events.copy()
+
+    for normal_event in unix_event_copy:
+        if type(normal_event.sorting_info[0]) is int:
+            date = (datetime.fromtimestamp(normal_event.sorting_info[0]).strftime('%b %d, %Y'))
+            normal_event.sorting_info = (date, normal_event.sorting_info[1], normal_event.sorting_info[2])
+
+        if normal_event.post_time != 0:
+            posted_time = datetime.fromtimestamp(normal_event.post_time).strftime('%Y-%m-%d %H:%M:%S')
+            normal_event.posted_time = posted_time
+
+    return unix_event_copy
 
 
 class UserInfoForm(FlaskForm):

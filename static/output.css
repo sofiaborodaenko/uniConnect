@@ -8,7 +8,6 @@
       "Courier New", monospace;
     --color-sky-200: oklch(0.901 0.058 230.902);
     --color-blue-50: oklch(0.97 0.014 254.604);
-    --color-blue-100: oklch(0.932 0.032 255.585);
     --color-blue-500: oklch(0.623 0.214 259.815);
     --color-blue-700: oklch(0.488 0.243 264.376);
     --color-gray-100: oklch(0.967 0.003 264.542);
@@ -258,6 +257,9 @@
   .flex-none {
     flex: none;
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   .items-center {
     align-items: center;
   }
@@ -285,10 +287,6 @@
   .rounded-sm {
     border-radius: var(--radius-sm);
   }
-  .border-1 {
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-  }
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
@@ -305,19 +303,9 @@
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
   }
-  .border-b-2 {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 2px;
-  }
   .border-solid {
     --tw-border-style: solid;
     border-style: solid;
-  }
-  .border-blue-100 {
-    border-color: var(--color-blue-100);
-  }
-  .border-gray-100 {
-    border-color: var(--color-gray-100);
   }
   .border-gray-200 {
     border-color: var(--color-gray-200);
@@ -428,13 +416,6 @@
         --tw-scale-y: 101%;
         --tw-scale-z: 101%;
         scale: var(--tw-scale-x) var(--tw-scale-y);
-      }
-    }
-  }
-  .hover\:bg-blue-100 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-blue-100);
       }
     }
   }
