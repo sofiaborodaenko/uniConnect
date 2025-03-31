@@ -26,60 +26,91 @@
         </div>
 
         <div class="flex items-center w-200 ml-4 h-10 p-10">
-                <div class="relative">
-                    <input type="text" id="search-bar" placeholder="Search" style="padding: 1rem"
-                           class="h-10 w-150 rounded-l-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-500">
-                    <button id="search-button" class="absolute right-0 top-0 h-full px-3 text-gray-600 hover:text-gray-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <select id="filter-dropdown" class="h-10 py-2 px-4 rounded-r-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ml-0">
-                    <option value="">Sort by</option>
-                    <option value="new">Date: New to Old</option>
-                    <option value="old">Date: Old to New</option>
-                </select>
+            <div class="relative">
+                <input type="text" id="search-bar" placeholder="Search" style="padding: 1rem"
+                       class="h-10 w-150 rounded-l-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-500">
+                <button id="search-button" style="right:0rem"
+                        class="absolute top-0 w-8 h-full px-3 text-gray-600 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </button>
             </div>
-        </div>
 
-        <div class="flex items-center justify-end pl-4">
-            <button onclick="toggleMenu()" class="focus:outline-none">
-                <img class="h-12 w-12 object-cover rounded-full border-2 border-white"
-                     src="static/imgs/user-img.png"
-                     draggable="false"
-                     alt="User Profile">
+            <select id="filter-dropdown"
+                    class="h-10 py-2 px-4 rounded-r-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ml-0">
+                <option value="">Sort by</option>
+                <option value="new">Date: New to Old</option>
+                <option value="old">Date: Old to New</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end pl-4">
+        <button onclick="toggleMenu()" class="focus:outline-none">
+            <img class="h-12 w-12 object-cover rounded-full border-2 border-white"
+                 src="static/imgs/user-img.png"
+                 draggable="false"
+                 alt="User Profile">
+        </button>
+    </div>
+</div>
+
+<div class="rounded-lg select-none user-form bg-gray-50 absolute top-18 right-1/100 box-border z-10"
+     style="padding:1rem" id="user-form">
+    <div class="flex border-b-1 h-15 items-end gap-x-4">
+        <img class="h-12 w-12 object-cover rounded-full border-2 border-white"
+             src="static/imgs/user-img.png"
+             draggable="false"
+             alt="User Profile">
+        <span class="font-bold text-3xl">Hello!</span>
+        <span>Tell us a bit about yourself!</span>
+    </div>
+    {% block user_form %}
+    <div class="p-6 m-6" style="padding:1rem">
+
+        <form method="POST" action="/" id="profileForm">
+
+            <label for="college">What College are you in?</label>
+            <select id="college" name="college" class="border p-2 rounded w-full" style="padding:0.25rem">
+                {% for college in ["Innis College", "New College", "Trinity College", "University College", "Victoria
+                College", "Woodsworth College"] %}
+                <option value="{{ college }}">{{ college }}</option>
+                {% endfor %}
+            </select>
+            <br/>
+
+            <label for="major">What Program are you in?</label>
+            <select id="major" name="major" class="border p-2 rounded w-full" style="padding:0.25rem">
+                {% for major in ["Art", "Computer Science", "Math", "Music", "Business", "Medical Science", "Filthy
+                Engineer"] %}
+                <option value="{{ major }}">{{ major }}</option>
+                {% endfor %}
+            </select>
+            <br/>
+
+
+            <label for="preferred_categories">Preferred Categories (ctrl-click to select multiple):</label>
+            <select id="preferred_categories" name="preferred_categories" multiple class="border p-2 rounded w-full" style="padding:0.25rem">
+                {% for category in ["Free Food", "Social", "Sports", "Academic", "Career", "Financial Help", "Mental Health", "Health", "Outdoor Adventure"] %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <br/>
+
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    style="padding:0.25rem">
+                Save Preferences
             </button>
-        </div>
-    </div>
+        </form>
 
-    <div class="user-form bg-blue-50 absolute top-full right-1/100 box-border" id="user-form">
-        {% block user_form %}
-        <div class="p-6 m-6">
-
-
-            <form method="POST">
-                {{ form.hidden_tag() }}
-
-                {{ form.college.label }}
-                {{ form.college() }}
-                <br/>
-                {{ form.major.label }}
-                {{ form.major() }}
-                <br/>
-                {{ form.preferred_categories.label }}
-                {{ form.preferred_categories() }}
-                <br/>
-                {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded") }}
-            </form>
-
-
-        </div>
-        {% endblock %}
 
     </div>
+    {% endblock %}
 
+</div>
 
 
 {% block body_content %}
@@ -110,7 +141,6 @@
                         <p class="event-location">{{ item['sorting_info'][0] }}</p></br>
 
                         <p class="event-location">{{ item['sorting_info'][1] }} </p> </br>
-
 
 
                         <p class="event-short-desc">{{ item['desc'] }}</p>
@@ -151,7 +181,8 @@
 <div class="side-bar h-screen overflow-y-auto sticky top-0 py-4 px-2 bg-white border-r border-gray-200">
     <!-- menu items -->
     <form class="sticky top-0 z-10 bg-white pt-4 pb-2 border-b border-gray-200">
-        <button type="submit" name="reset" id="resetFilters" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+        <button type="submit" name="reset" id="resetFilters"
+                class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
             Reset Filters
         </button>
     </form>
@@ -168,9 +199,9 @@
 
             <div class="sub-menu">
                 <form method="POST" action="/">
-                    {% for category in ["Free Food", "Social", "Sports", "Academic", "Career", "Financial Help", "Mental
-                    Health", "Health", "Outdoor Adventure"] %}
-                    <li class="whitespace-nowrap overflow-hidden"><input id="{{category}}-checkbox" type="checkbox" value="{{category}}" name="category-checkbox">
+                    {% for category in ["Free Food", "Social", "Sports", "Academic", "Career", "Financial Help", "Mental Health", "Health", "Outdoor Adventure"] %}
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{category}}-checkbox" type="checkbox"
+                                                                         value="{{category}}" name="category-checkbox">
                         <label for="{{category}}-checkbox"
                                class="ms-2 text-sm font-medium text-gray-900">{{category}}</label>
                     </li>
@@ -189,7 +220,8 @@
             <div class="sub-menu">
                 <form method="POST" action="/">
                     {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
-                    <li class="whitespace-nowrap overflow-hidden"><input id="{{day}}-checkbox" type="checkbox" value="{{day}}" name="week-checkbox">
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{day}}-checkbox" type="checkbox"
+                                                                         value="{{day}}" name="week-checkbox">
                         <label for="{{day}}-checkbox" class="ms-2 text-sm font-medium text-gray-900">{{day}}</label>
                     </li>
                     {% endfor %}
@@ -208,7 +240,8 @@
                 <form method="POST" action="/">
                     {% for college in ["Innis College", "New College", "Trinity College", "University College",
                     "Victoria College", "Woodsworth College"] %}
-                    <li class="whitespace-nowrap overflow-hidden"><input id="{{college}}-checkbox" type="checkbox" value="{{college}}" name="college-checkbox">
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{college}}-checkbox" type="checkbox"
+                                                                         value="{{college}}" name="college-checkbox">
                         <label for="{{college}}-checkbox"
                                class=" ms-2 text-sm font-medium text-gray-900">{{college}}</label>
                     </li>
@@ -233,6 +266,28 @@
     function toggleMenu(){
         userForm.classList.toggle("open-form");
     }
+
+    $('#profileForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const user_data = {
+            college: $('#college').val(),
+            major: $('#major').val(),
+            preferred_categories: $('#preferred_categories').val() || []
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/update-profile",
+            data: JSON.stringify(user_data),
+            contentType: "application/json",
+            success: function(response) {
+                toggleMenu()
+            }
+        });
+    });
+
+
 </script>
 
 <script>
@@ -245,147 +300,149 @@
     });
 
 
+
+
 </script>
 
 <script>
-     $(document).ready(function(){
+    $(document).ready(function(){
 
 
 
-                const userFilters = {{ selected_filters | tojson }};
+               const userFilters = {{ selected_filters | tojson }};
 
 
-                if (userFilters) {
-                    $('input[type="checkbox"]').each(function(){
-                        let checkboxValue = $(this).val();
-                        let checkboxName = $(this).attr("name");
+               if (userFilters) {
+                   $('input[type="checkbox"]').each(function(){
+                       let checkboxValue = $(this).val();
+                       let checkboxName = $(this).attr("name");
 
-                        if ((checkboxName == "category-checkbox" && userFilters.categories.includes(checkboxValue)) ||
-                            (checkboxName == "week-checkbox" && userFilters.days.includes(checkboxValue)) ||
-                            (checkboxName == "college-checkbox" && userFilters.colleges.includes(checkboxValue))) {
+                       if ((checkboxName == "category-checkbox" && userFilters.categories.includes(checkboxValue)) ||
+                           (checkboxName == "week-checkbox" && userFilters.days.includes(checkboxValue)) ||
+                           (checkboxName == "college-checkbox" && userFilters.colleges.includes(checkboxValue))) {
 
-                            $(this).prop("checked", true);  // Pre-select the checkboxes based on the global dictionary
-                        }
-                    });
-                }
+                           $(this).prop("checked", true);  // Pre-select the checkboxes based on the global dictionary
+                       }
+                   });
+               }
 
 
-                // for toggling the sub-menus
-                 $('.sub-btn').click(function(){
-            $(this).next('.sub-menu').slideToggle();
-        });
+               // for toggling the sub-menus
+                $('.sub-btn').click(function(){
+           $(this).next('.sub-menu').slideToggle();
+       });
 
-        // search
-        $('#search-button').click(performSearch);
-        $('#search-bar').keypress(function(e){
-            if(e.which == 13) performSearch();
-        });
+       // search
+       $('#search-button').click(performSearch);
+       $('#search-bar').keypress(function(e){
+           if(e.which == 13) performSearch();
+       });
 
-        // sort
-        $('#filter-dropdown').change(performSort);
+       // sort
+       $('#filter-dropdown').change(performSort);
 
-        // filter
-        $('input[type="checkbox"]').change(updateFilters);
+       // filter
+       $('input[type="checkbox"]').change(updateFilters);
 
-        // reset
-        $("#resetFilters").click(function(e){
-            e.preventDefault();
-            $('input[type="checkbox"]').prop("checked", false);
-            $('#search-bar').val('');
-            $('#filter-dropdown').val('');
-            updateFilters();
-        });
+       // reset
+       $("#resetFilters").click(function(e){
+           e.preventDefault();
+           $('input[type="checkbox"]').prop("checked", false);
+           $('#search-bar').val('');
+           $('#filter-dropdown').val('');
+           updateFilters();
+       });
 
-        function performSearch() {
-            updateFilters();
-        }
+       function performSearch() {
+           updateFilters();
+       }
 
-        function performSort() {
-            updateFilters();
-        }
+       function performSort() {
+           updateFilters();
+       }
 
-        function updateFilters() {
-            const filters = {
-                query: $('#search-bar').val().trim(),
-                sort: $('#filter-dropdown').val(),
-                categories: $('input[name="category-checkbox"]:checked').map((i,e) => e.value).get(),
-                days: $('input[name="week-checkbox"]:checked').map((i,e) => e.value).get(),
-                colleges: $('input[name="college-checkbox"]:checked').map((i,e) => e.value).get()
-            };
+       function updateFilters() {
+           const filters = {
+               query: $('#search-bar').val().trim(),
+               sort: $('#filter-dropdown').val(),
+               categories: $('input[name="category-checkbox"]:checked').map((i,e) => e.value).get(),
+               days: $('input[name="week-checkbox"]:checked').map((i,e) => e.value).get(),
+               colleges: $('input[name="college-checkbox"]:checked').map((i,e) => e.value).get()
+           };
 
+           $.ajax({
+               type: "POST",
+               url: "/update-selection",
+               data: JSON.stringify(filters),
+               contentType: "application/json",
+               success: function(response){
+                   updateDisplay();
+               }
+           });
+       }
+
+
+       function updateDisplay(){
             $.ajax({
-                type: "POST",
-                url: "/update-selection",
-                data: JSON.stringify(filters),
-                contentType: "application/json",
-                success: function(response){
-                    updateDisplay();
-                }
-            });
-        }
+                       type: "GET",
+                       url: "/get-updated-events",
+                       success: function(data){
+                           console.log("Updated Events:", data);
+
+                           let eventContainer = $(".tree-container .tree");
+                           eventContainer.empty(); // clear existing events
+
+                           // append new events dynamically
+                           data.forEach(function(item){
+                               let eventHtml = `
+                                   <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
+                                   <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
+                                       ${item.image ? `
+                                       <div class="flex">
+                                           <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
+                                               src="${item.image}">
+                                           <div class="event-text grid">
+                                               <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                                   class="hover:underline">${item.name}</a></strong>
+                                               <p class="college-name">${item.sorting_info[2]}</p>
+
+                                               ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p>` : ''}
+
+                                               ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
+
+                                               <p class="event-location">${item.sorting_info[0]}</p></br>
+
+                                               <p class="event-location">${item.sorting_info[1]}</p> </br>
+
+                                               <p class="event-short-desc">${item.desc}</p>
+                                           </div>
+                                       </div>` : `
+                                       <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                           class="hover:underline">${item.name}</a></strong>
+                                       <p class="college-name">${item.sorting_info[2]}</p>
+
+                                       ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p> </br>` : ''}
+
+                                       ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
+
+                                       <p class="event-location">${item.sorting_info[0]}</p> </br>
+
+                                       <p class="event-location">${item.sorting_info[1]}</p> </br>
+
+                                       <p>${item.desc}</p>
+                                       `}
+                                   </a>
+                               </div>
+
+                               `;
+                               eventContainer.append(eventHtml);
+                           });
+                       }
+                   });
+           }
 
 
-        function updateDisplay(){
-             $.ajax({
-                        type: "GET",
-                        url: "/get-updated-events",
-                        success: function(data){
-                            console.log("Updated Events:", data);
-
-                            let eventContainer = $(".tree-container .tree");
-                            eventContainer.empty(); // clear existing events
-
-                            // append new events dynamically
-                            data.forEach(function(item){
-                                let eventHtml = `
-                                    <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
-                                    <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
-                                        ${item.image ? `
-                                        <div class="flex">
-                                            <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
-                                                src="${item.image}">
-                                            <div class="event-text grid">
-                                                <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
-                                                    class="hover:underline">${item.name}</a></strong>
-                                                <p class="college-name">${item.sorting_info[2]}</p>
-
-                                                ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p>` : ''}
-
-                                                ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
-
-                                                <p class="event-location">${item.sorting_info[0]}</p></br>
-
-                                                <p class="event-location">${item.sorting_info[1]}</p> </br>
-
-                                                <p class="event-short-desc">${item.desc}</p>
-                                            </div>
-                                        </div>` : `
-                                        <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
-                                            class="hover:underline">${item.name}</a></strong>
-                                        <p class="college-name">${item.sorting_info[2]}</p>
-
-                                        ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p> </br>` : ''}
-
-                                        ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
-
-                                        <p class="event-location">${item.sorting_info[0]}</p> </br>
-
-                                        <p class="event-location">${item.sorting_info[1]}</p> </br>
-
-                                        <p>${item.desc}</p>
-                                        `}
-                                    </a>
-                                </div>
-
-                                `;
-                                eventContainer.append(eventHtml);
-                            });
-                        }
-                    });
-            }
-
-
-     });
+    });
 
 </script>
 

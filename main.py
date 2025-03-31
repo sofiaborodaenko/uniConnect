@@ -5,6 +5,7 @@ from charset_normalizer.md import annotations
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
+from wtforms.fields.choices import SelectMultipleField
 from wtforms.validators import DataRequired
 import json
 import event
@@ -20,7 +21,7 @@ def create_app():
         app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
         app.config['EVENT_LIST_READABLE'] = app.config['EVENT_LIST']
         app.config['USER_SELECTED_FILTER'] = {'categories': [], 'days': [], 'colleges': []}
-        app.config['USER_DATA'] = {}
+        app.config['USER_DATA'] = {'college': "", 'major': "", 'preferred_categories': []}
 
     return app
 
@@ -43,56 +44,15 @@ def index():
 
     event_list = app.config['EVENT_LIST_READABLE']
 
-    form_information = user_form_information()
+    form_information = app.config['USER_DATA']
 
     return render_template('index.html',
                            college=form_information["college"],
                            major=form_information["major"],
-                           preferred_categories=form_information["preferred categories"],
-                           form=form_information["form"],
+                           preferred_categories=form_information["preferred_categories"],
+                           form=form_information,
                            selected_filters=selected_filters,
                            events_list=event_list)
-
-
-def user_form_information() -> dict:
-    """
-        Collects the data if the user does the form
-    """
-
-    college = None  # initializes the values of the user form to none
-    major = None
-    preferred_categories = None
-    form = UserInfoForm()
-
-    # validating the form
-    if form.validate_on_submit():
-        college = form.college.data  # assigning the data to the variables
-        major = form.major.data
-        preferred_categories = form.preferred_categories.data
-
-        form.college.data = ''  # resetting the values
-        form.major.data = ''
-        form.preferred_categories.data = ''
-
-    # resets the values in the user_data if the reset button is clicked
-    if request.form.get('reset'):
-        form.college.data = ''  # resetting the values
-        form.major.data = ''
-        form.preferred_categories.data = ''
-
-    user_data = {
-        "college": college,
-        "major": major,
-        "preferred categories": preferred_categories
-    }
-
-    app.config["USER_DATA"] = user_data
-
-    print(user_data)
-
-    user_data["form"] = form
-
-    return user_data
 
 
 @app.route('/<string:title>')
@@ -179,6 +139,24 @@ def update_selection():
     })
 
 
+@app.route("/update-profile", methods=["POST"])
+def update_profile():
+    data = request.get_json()
+    print(data)
+
+    app.config['USER_DATA'] = {
+        'college': data.get("college", ""),
+        'major': data.get("major", ""),
+        'preferred_categories': data.get("preferred_categories", [])
+    }
+
+    return jsonify({
+        "college": app.config['USER_DATA']["college"],
+        "major": app.config['USER_DATA']["major"],
+        "preferred_categories": app.config['USER_DATA']["preferred_categories"],
+    })
+
+
 def filter_events(filter_dict: dict) -> list:
     """
         Given the dictionary containing the clicked on checkboxes, goes through the events and
@@ -232,17 +210,6 @@ def change_time_readability(unix_events: list) -> list:
             normal_event.post_time = posted_time
 
     return unix_event_copy
-
-
-class UserInfoForm(FlaskForm):
-    """
-        UserInfoForm stores and generates a form for the user to fill out depending on their preferences
-    """
-
-    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
-    major = StringField("What Major Are You In?")
-    preferred_categories = StringField("What Are Your Preferred Categories?")
-    submit = SubmitField("Submit")
 
 
 if __name__ == "__main__":
