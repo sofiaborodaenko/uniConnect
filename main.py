@@ -224,7 +224,7 @@ def change_time_readability(unix_events: list) -> list:
 
     for normal_event in unix_event_copy:
         if type(normal_event.sorting_info[0]) is int:
-            date = (datetime.fromtimestamp(normal_event.sorting_info[0]).strftime('%b %d, %Y'))
+            date = (datetime.fromtimestamp(normal_event.sorting_info[0]).strftime('%A, %b %d, %Y'))
             normal_event.sorting_info = (date, normal_event.sorting_info[1], normal_event.sorting_info[2])
 
         if normal_event.post_time != 0 and type(normal_event.post_time) is not str:
