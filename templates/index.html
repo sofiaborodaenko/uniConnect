@@ -44,6 +44,7 @@
                 <option value="">Sort by</option>
                 <option value="new">Date: New to Old</option>
                 <option value="old">Date: Old to New</option>
+                <option value="rec">Recommended</option>
             </select>
         </div>
     </div>
@@ -84,8 +85,7 @@
 
             <label for="major">What Program are you in?</label>
             <select id="major" name="major" class="border p-2 rounded w-full" style="padding:0.25rem">
-                {% for major in ["Art", "Computer Science", "Math", "Music", "Business", "Medical Science", "Filthy
-                Engineer"] %}
+                {% for major in ["Arts", "Science", "Medicine", "Law", "Management", "Music", "Education", "Dentistry", "Public Health"] %}
                 <option value="{{ major }}">{{ major }}</option>
                 {% endfor %}
             </select>
@@ -173,6 +173,7 @@
         {% endfor %}
 
     </div>
+
 </div>
 {% endblock %}
 

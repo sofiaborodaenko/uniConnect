@@ -9,6 +9,7 @@ from wtforms.fields.choices import SelectMultipleField
 from wtforms.validators import DataRequired
 import json
 import event
+from recommendation import recommend_events
 
 
 def create_app():
@@ -140,7 +141,7 @@ def update_profile():
 
     return jsonify({
         "college": app.config['USER_DATA']["college"],
-        "major": app.config['USER_DATA']["major"],
+        "faculty": app.config['USER_DATA']["major"],
         "preferred_categories": app.config['USER_DATA']["preferred_categories"],
     })
 
@@ -175,7 +176,14 @@ def filter_events(filter_dict: dict) -> list:
         filtered_events = event.search_event(filtered_events, query)
 
     if sort:
-        filtered_events = event.radix_sort_events(filtered_events, sort)
+        if sort == "rec":
+            filtered_events = recommend_events(app.config['USER_DATA'], app.config['EVENT_TREE'])
+        else:
+            filtered_events = event.radix_sort_events(filtered_events, sort)
+
+
+    print([x.name[:5] for x in filtered_events])
+    print(app.config)
 
     return filtered_events
 
