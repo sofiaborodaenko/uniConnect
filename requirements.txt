@@ -1,0 +1,17 @@
+# uniConnect Project: Python libraries used in this app
+
+# Flask Web Framework and Form Handling
+Flask==2.3.2
+Flask-WTF==1.1.1
+WTForms==3.1.1
+
+# Web scraping and HTTP requests
+requests==2.31.0
+beautifulsoup4==4.12.3
+selenium==4.20.0
+
+# Character encoding handling
+charset-normalizer==3.3.2
+
+# Optional: for managing ChromeDriver automatically (recommended)
+webdriver-manager==4.0.1
