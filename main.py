@@ -1,33 +1,33 @@
+import copy
+from datetime import datetime
+
+from charset_normalizer.md import annotations
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 import json
 import event
-import scrapper
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = "password"
+from recommendation import recommend_events
 
 
-class UserInfoForm(FlaskForm):
-    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
-    major = StringField("What Major Are You In?")
-    preferred_categories = StringField("What Are Your Preferred Categories?")
-    submit = SubmitField("Submit")
+def create_app():
+    """Factory function to create and configure the Flask app"""
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = "password"
+
+    with app.app_context():
+        app.config['EVENT_TREE'] = event.generate_tree()
+        app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
+        app.config['EVENT_LIST_READABLE'] = app.config['EVENT_LIST']
+        app.config['USER_SELECTED_FILTER'] = {'categories': [], 'days': [], 'colleges': []}
+        app.config['USER_DATA'] = {}
+
+    return app
 
 
-def load_event_data():
-    """
-        Opens the event json file
-    """
-    with open("static/u_of_t_events.json", "r") as file:
-        list_version = json.load(file)
-
-    with open("static/u_of_t_events_original.json", "r") as file:
-        list_version_original = json.load(file)
-
-    return list_version, list_version_original
+app = create_app()
 
 
 @app.route("/", methods=['POST', 'GET'])  # default route
@@ -38,16 +38,28 @@ def index():
     print("index running")
 
     # if the checkboxes were previously clicked, sends info to the frontend
-    try:
-        with open("static/user_selected_filters.json", "r") as file:
-            selected_filters = json.load(file)
-            print(selected_filters)
-    except (FileNotFoundError, json.JSONDecodeError):
-        selected_filters = {"categories": [], "days": [], "colleges": []}
+    selected_filters = app.config['USER_SELECTED_FILTER']
+    event_list = app.config['EVENT_LIST']
+    #print(event_list)
+    app.config['EVENT_LIST_READABLE'] = change_time_readability(event_list)
 
-    tree_event_structure_list = load_event_data()[0]
-    # print(tree_event_structure)
-    # print("list: ", tree_event_structure_list)
+    event_list = app.config['EVENT_LIST_READABLE']
+
+    form_information = user_form_information()
+
+    return render_template('index.html',
+                           college=form_information["college"],
+                           major=form_information["major"],
+                           preferred_categories=form_information["preferred categories"],
+                           form=form_information["form"],
+                           selected_filters=selected_filters,
+                           events_list=event_list)
+
+
+def user_form_information() -> dict:
+    """
+        Collects the data if the user does the form
+    """
 
     college = None  # initializes the values of the user form to none
     major = None
@@ -76,149 +88,185 @@ def index():
         "preferred categories": preferred_categories
     }
 
-    # saves the info as a json file
-    with open("static/user_data.json", "w") as file:
-        json.dump(user_data, file, indent=4)
+    app.config["USER_DATA"] = user_data
 
-    return render_template('index.html',
-                           college=college,
-                           major=major,
-                           preferred_categories=preferred_categories,
-                           form=form,
-                           selected_filters=selected_filters,
-                           events_list=tree_event_structure_list)
+    print(user_data)
+
+    user_data["form"] = form
+
+    return user_data
 
 
-@app.route("/update-selection", methods=["POST"])
-def update_selection():
+@app.route('/<string:title>')
+def ind_event(title):
     """
-        Gets the categories the user selected, creates a json file with the lists,
-        filters the u_of_t_events.json.
+        Creates an individual page if the event was clicked on
     """
-    data = request.get_json()
+    if title == "favicon.ico":
+        return "", 204  # return empty response with HTTP 204 (No Content)
 
-    categories = data.get("categories", [])
-    days = data.get("days", [])
-    colleges = data.get("colleges", [])
+    individual_event = None
 
-    user_selection = {
-        "categories": categories,
-        "days": days,
-        "colleges": colleges
-    }
+    selected_filters = app.config['USER_SELECTED_FILTER']
 
-    # creates a json file containing the selected filters
-    with open('static/user_selected_filters.json', 'w') as file:
-        json.dump(user_selection, file, indent=4)
+    # iterates through the list
+    for page in app.config["EVENT_LIST_READABLE"]:
+        if page.name == title:  # once event is found sets it to the variable
+            individual_event = page.to_dict()
+            print("PAGE", individual_event)
+            break
 
-    # print("selected categories:", categories)
-    # print("selected days:", days)
-    # print("selected colleges:", colleges)
-
-    # generates a tree from the u_of_t_events.json
-    uoft_event_tree = event.generate_tree()
-    filtered_events = []  # keeps the events after theyre filtered
-    filtered_events_for_json = []  # keeps the evens after they're convereted to a dict
-
-    # filter the events if the lists are populated
-    if categories:
-        filtered_events.extend(uoft_event_tree.filter_tree(categories))
-
-    if days:
-        filtered_events.extend(uoft_event_tree.filter_tree(days))
-
-    if colleges:
-        filtered_events.extend(uoft_event_tree.filter_tree(colleges))
-
-    print(filtered_events)
-
-    # converts the filtered events to a dict form
-    if filtered_events:
-        for events in filtered_events:
-            event.add_event_dict(
-                filtered_events_for_json,
-                events.name,
-                events.desc,
-                events.location,
-                events.sorting_info,
-                events.post_time,
-                events.image
-
-            )
-
-        with open('static/u_of_t_events.json', 'w') as file:
-            json.dump(filtered_events_for_json, file, indent=4)
-    else:
-
-        original_events = load_event_data()[1]
-        with open('static/u_of_t_events.json', 'w') as file:
-            json.dump(original_events, file, indent=4)
-
-    return jsonify({
-        "categories": categories,
-        "days": days,
-        "colleges": colleges
-    })
+    # returns and renders a new page
+    return render_template('event.html', individual_event=individual_event, selected_filters=selected_filters)
 
 
 @app.route("/reset-filters", methods=["POST"])
 def reset_filters():
     """
-    Resets the user_selected_filter.json if the reset filters button is clicked
+        Resets the lists if the reset filter button is clicked
     """
+    app.config['USER_SELECTED_FILTER'] = {"categories": [], "days": [], "colleges": []}
 
-    clear_filters = {"categories": [], "days": [], "colleges": []}
-
-    with open("static/user_selected_filters.json", "w") as file:
-        json.dump(clear_filters, file, indent=4)
-
-    original_events = load_event_data()[1]
-    with open('static/u_of_t_events.json', 'w') as file:
-        json.dump(original_events, file, indent=4)
+    app.config['EVENT_LIST'] = app.config['EVENT_TREE'].events_to_list()
 
     return jsonify({"message": "Filters reset successfully"})
 
 
-"""
-@app.route("/user-info", methods=['GET', 'POST'])
-def user_info():
-    
-    college = None
-    major = None
-    preferred_categories = None
-    form = UserInfoForm()
+@app.route("/get-updated-events", methods=["GET"])
+def get_updated_events():
+    """
+        Returns the updated events as JSON for dynamic frontend updates
+    """
+    return jsonify([event_copy.to_dict() for event_copy in app.config['EVENT_LIST_READABLE']])
 
-    # validating the form
-    if form.validate_on_submit():
-        college = form.college.data  # assigning the data to the variables
-        major = form.major.data
-        preferred_categories = form.preferred_categories.data
 
-        form.college.data = ''  # resetting the values
-        form.major.data = ''
-        form.preferred_categories.data = ''
+@app.route("/update-selection", methods=["POST"])
+def update_selection():
+    """
+        Gets the data from the checkboxes from the html and returns the necessary events
+    """
+    data = request.get_json()
 
-    user_data = {
-        "college": college,
-        "major": major,
-        "preferred categories": preferred_categories
+    app.config['USER_SELECTED_FILTER']["categories"] = data.get("categories", [])
+    app.config['USER_SELECTED_FILTER']["days"] = data.get("days", [])
+    app.config['USER_SELECTED_FILTER']["colleges"] = data.get("colleges", [])
+    app.config['USER_SELECTED_FILTER']["query"] = data.get("query", "")
+    app.config['USER_SELECTED_FILTER']["sort"] = data.get("sort", "")
+
+
+
+    potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
+
+
+    app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
+    app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
+
+    # if no checkboxes are checked set the event list to the original events
+    if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
+        app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
+
+    # changes the date of event
+    #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
+
+    #print("selected categories:", user_selected_filter["categories"])
+    #print("selected days:", user_selected_filter["days"])
+    #print("selected colleges:", user_selected_filter["colleges"])
+
+    return jsonify({
+        "categories": app.config['USER_SELECTED_FILTER']["categories"],
+        "days": app.config['USER_SELECTED_FILTER']["days"],
+        "colleges": app.config['USER_SELECTED_FILTER']["colleges"],
+        "query": app.config['USER_SELECTED_FILTER']["query"],
+        "sort": app.config['USER_SELECTED_FILTER']["sort"]
+    })
+
+
+def filter_events(filter_dict: dict) -> list:
+    """
+        Given the dictionary containing the clicked on checkboxes, goes through the events and
+        returns a list of the new events if they exist
+    """
+    filtered_events = [] # keeps the events after theyre filtered
+
+    categories = filter_dict["categories"]
+    days = filter_dict["days"]
+    colleges = filter_dict["colleges"]
+    query = filter_dict["query"]
+    sort = filter_dict["sort"]
+
+    # filter the events if the lists are populated
+    if categories:
+        filtered_events.extend(app.config['EVENT_TREE'].filter_tree(categories))
+
+    if days:
+        filtered_events.extend(app.config['EVENT_TREE'].filter_tree(days))
+
+    if colleges:
+        filtered_events.extend(app.config['EVENT_TREE'].filter_tree(colleges))
+
+    if not days and not categories and not colleges:
+        filtered_events = app.config['EVENT_TREE'].events_to_list()
+
+    if query:
+        filtered_events = event.search_event(filtered_events, query)
+
+    if sort:
+        filtered_events = event.radix_sort_events(filtered_events, sort)
+
+
+    #print("THE FILTERED EVENTS: ", filtered_events_for_front)
+    return filtered_events
+
+
+def change_time_readability(unix_events: list) -> list:
+    """
+        Changes the date of the event from unix stampcode to readable date
+    """
+    unix_event_copy = copy.deepcopy(unix_events)
+
+    for normal_event in unix_event_copy:
+        if type(normal_event.sorting_info[0]) is int:
+            date = (datetime.fromtimestamp(normal_event.sorting_info[0]).strftime('%b %d, %Y'))
+            normal_event.sorting_info = (date, normal_event.sorting_info[1], normal_event.sorting_info[2])
+
+        if normal_event.post_time != 0 and type(normal_event.post_time) is not str:
+            posted_time = datetime.fromtimestamp(normal_event.post_time).strftime('%Y-%m-%d %H:%M:%S')
+            normal_event.post_time = posted_time
+
+    return unix_event_copy
+
+@app.route("/recommendations", methods=["GET"])
+def recommend_route():
+    """
+    Endpoint to generate personalized event recommendations based on USER_DATA.
+    """
+    user_profile = app.config.get('USER_DATA', {})
+
+    if not user_profile or not user_profile.get("college") or not user_profile.get("preferred categories"):
+        return jsonify({"error": "Incomplete user profile"}), 400
+
+    transformed_profile = {
+        "college": user_profile.get("college"),
+        "preferred_categories": user_profile.get("preferred categories"),
     }
 
-    # saves the info as a json file
-    with open("user_data.json", "w") as file:
-        json.dump(user_data, file, indent=4)
+    event_tree = app.config['EVENT_TREE']
+    recommendations = recommend_events(transformed_profile, event_tree)
 
-    return render_template('index.html',
-                           college=college,
-                           major=major,
-                           preferred_categories=preferred_categories,
-                           form=form)
+    return jsonify(recommendations)
 
-"""
+
+
+class UserInfoForm(FlaskForm):
+    """
+        UserInfoForm stores and generates a form for the user to fill out depending on their preferences
+    """
+
+    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
+    major = StringField("What Major Are You In?")
+    preferred_categories = StringField("What Are Your Preferred Categories?")
+    submit = SubmitField("Submit")
+
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
-
-#Need a method to parse data
-#Import tkinter and Flask
-#(Probably optional for now) Add a scrapy to scrape off sites
+    app.run(debug=True, port=8080)
