@@ -49,7 +49,7 @@ def index():
 
     return render_template('index.html',
                            college=form_information["college"],
-                           major=form_information["major"],
+                           faculty=form_information["faculty"],
                            preferred_categories=form_information["preferred categories"],
                            form=form_information["form"],
                            selected_filters=selected_filters,
@@ -62,29 +62,29 @@ def user_form_information() -> dict:
     """
 
     college = None  # initializes the values of the user form to none
-    major = None
+    faculty = None
     preferred_categories = None
     form = UserInfoForm()
 
     # validating the form
     if form.validate_on_submit():
         college = form.college.data  # assigning the data to the variables
-        major = form.major.data
+        faculty = form.faculty.data
         preferred_categories = form.preferred_categories.data
 
         form.college.data = ''  # resetting the values
-        form.major.data = ''
+        form.faculty.data = ''
         form.preferred_categories.data = ''
 
     # resets the values in the user_data if the reset button is clicked
     if request.form.get('reset'):
         form.college.data = ''  # resetting the values
-        form.major.data = ''
+        form.faculty.data = ''
         form.preferred_categories.data = ''
 
     user_data = {
         "college": college,
-        "major": major,
+        "faculty": faculty,
         "preferred categories": preferred_categories
     }
 
@@ -263,7 +263,7 @@ class UserInfoForm(FlaskForm):
     """
 
     college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
-    major = StringField("What Major Are You In?")
+    faculty = StringField("What faculty Are You In?")
     preferred_categories = StringField("What Are Your Preferred Categories?")
     submit = SubmitField("Submit")
 
