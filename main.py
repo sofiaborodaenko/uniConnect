@@ -130,6 +130,9 @@ def update_selection():
 
 @app.route("/update-profile", methods=["POST"])
 def update_profile():
+    """
+        Gets the data from the user form from the html and returns the necessary user information
+    """
     data = request.get_json()
     print(data)
 
@@ -181,9 +184,6 @@ def filter_events(filter_dict: dict) -> list:
         else:
             filtered_events = event.radix_sort_events(filtered_events, sort)
 
-
-    print([x.name[:5] for x in filtered_events])
-    print(app.config)
 
     return filtered_events
 

@@ -26,10 +26,10 @@ def compute_score(event: Event, user_profile: Dict) -> float:
     score = 0
 
     # Match by college
-    if event.sorting_info[1] == user_profile.get('college'):
+    if event.sorting_info[2] == user_profile.get('college'):
         score += 1.0
 
-    if event.sorting_info[2] in user_profile.get('preferred_categories', []):
+    if event.sorting_info[1] in user_profile.get('preferred_categories', []):
         score += 0.5
 
     faculty = user_profile.get('faculty', '').lower()
@@ -51,14 +51,17 @@ def recommend_events(user_profile: Dict, events_tree: EventTree, top_n: int = 5)
     scored_events.sort(key=lambda x: x[1], reverse=True)
     recommended = [event for event, score in scored_events 
                    if event.name not in user_profile.get('clicked_events', [])]
+
+    print(scored_events)
+
     return recommended[:top_n]
 
 if __name__ == "__main__":
     events_tree = generate_tree()
 
     user_profile = {
-        "college": "Innis",
-        "preferred_categories": ["General", "Social", "Free Food"],
+        "college": "Innis College",
+        "preferred_categories": [""],
         "faculty": "Arts",
     }
 

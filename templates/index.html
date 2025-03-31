@@ -268,25 +268,6 @@
         userForm.classList.toggle("open-form");
     }
 
-    $('#profileForm').on('submit', function(e) {
-        e.preventDefault();
-
-        const user_data = {
-            college: $('#college').val(),
-            major: $('#major').val(),
-            preferred_categories: $('#preferred_categories').val() || []
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/update-profile",
-            data: JSON.stringify(user_data),
-            contentType: "application/json",
-            success: function(response) {
-                toggleMenu()
-            }
-        });
-    });
 
 
 </script>
@@ -308,6 +289,27 @@
 <script>
     $(document).ready(function(){
 
+        $('#profileForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const user_data = {
+                college: $('#college').val(),
+                major: $('#major').val(),
+                preferred_categories: $('#preferred_categories').val() || []
+            };
+            $.ajax({
+                type: "POST",
+                url: "/update-profile",
+                data: JSON.stringify(user_data),
+                contentType: "application/json",
+                success: function(response) {
+                    toggleMenu()
+                    updateFilters();
+                }
+
+
+            });
+        });
 
 
                const userFilters = {{ selected_filters | tojson }};

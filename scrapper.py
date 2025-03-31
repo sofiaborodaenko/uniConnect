@@ -106,6 +106,9 @@ HTML Source:
 
 
 def extract_data(url: str, source: str, college_name: str) -> dict:
+    """
+    Takes the link of the event, and return a dictionary with extracted information
+    """
     message_content = call_llm_models(url, source, college_name)
     content_dict = {}
     content_array = message_content.split("\n")
@@ -133,6 +136,9 @@ def extract_data(url: str, source: str, college_name: str) -> dict:
 
 
 def scrape(url: str, add_url: str, college_name: str) -> None:
+    """
+    Get main domain of an event page, extract the links of each event and retrieve their information
+    """
     driver.get(url + add_url)
     time.sleep(3)
     soup = BeautifulSoup(driver.page_source, "html.parser")

@@ -206,6 +206,7 @@ def search_event(events: list[Event], query: str) -> list[Event]:
 
 def generate_tree() -> EventTree:
     """
+        Given a file, create events and put them in a tree
     """
     tree = EventTree(None, [])
     with open('static/u_of_t_events_original.json', 'r', encoding='utf-8') as file:
