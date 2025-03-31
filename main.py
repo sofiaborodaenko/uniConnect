@@ -1,12 +1,8 @@
 import copy
 from datetime import datetime
-
-from charset_normalizer.md import annotations
 from flask import Flask, request, jsonify, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
-import json
 import event
 
 
@@ -33,12 +29,9 @@ def index():
     """
     Renders the main page html
     """
-    print("index running")
-
     # if the checkboxes were previously clicked, sends info to the frontend
     selected_filters = app.config['USER_SELECTED_FILTER']
     event_list = app.config['EVENT_LIST']
-    #print(event_list)
     app.config['EVENT_LIST_READABLE'] = change_time_readability(event_list)
 
     event_list = app.config['EVENT_LIST_READABLE']
@@ -80,15 +73,9 @@ def user_form_information() -> dict:
         form.major.data = ''
         form.preferred_categories.data = ''
 
-    user_data = {
-        "college": college,
-        "major": major,
-        "preferred categories": preferred_categories
-    }
+    user_data = {"college": college, "major": major, "preferred categories": preferred_categories}
 
     app.config["USER_DATA"] = user_data
-
-    print(user_data)
 
     user_data["form"] = form
 
@@ -151,24 +138,15 @@ def update_selection():
     app.config['USER_SELECTED_FILTER']["query"] = data.get("query", "")
     app.config['USER_SELECTED_FILTER']["sort"] = data.get("sort", "")
 
-
-
     potential_filtered_events = filter_events(app.config['USER_SELECTED_FILTER'])
 
-
-    app.config['EVENT_LIST'] = potential_filtered_events # stores a list of dict of filtered events
+    app.config['EVENT_LIST'] = potential_filtered_events  # stores a list of dict of filtered events
+    # changes the date of event
     app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
 
     # if no checkboxes are checked set the event list to the original events
     if all(not app.config['USER_SELECTED_FILTER'][key] for key in ["categories", "days", "colleges"]):
         app.config['EVENT_LIST_READABLE'] = change_time_readability(app.config['EVENT_LIST'])
-
-    # changes the date of event
-    #app.config['EVENT_LIST'] = change_time_readability(app.config['EVENT_LIST'])
-
-    #print("selected categories:", user_selected_filter["categories"])
-    #print("selected days:", user_selected_filter["days"])
-    #print("selected colleges:", user_selected_filter["colleges"])
 
     return jsonify({
         "categories": app.config['USER_SELECTED_FILTER']["categories"],
@@ -184,7 +162,7 @@ def filter_events(filter_dict: dict) -> list:
         Given the dictionary containing the clicked on checkboxes, goes through the events and
         returns a list of the new events if they exist
     """
-    filtered_events = [] # keeps the events after theyre filtered
+    filtered_events = []  # keeps the events after theyre filtered
 
     categories = filter_dict["categories"]
     days = filter_dict["days"]
@@ -211,8 +189,6 @@ def filter_events(filter_dict: dict) -> list:
     if sort:
         filtered_events = event.radix_sort_events(filtered_events, sort)
 
-
-    #print("THE FILTERED EVENTS: ", filtered_events_for_front)
     return filtered_events
 
 
@@ -239,7 +215,7 @@ class UserInfoForm(FlaskForm):
         UserInfoForm stores and generates a form for the user to fill out depending on their preferences
     """
 
-    college = StringField("What College Are You In?")  # if want validators then, valdiators=[DataRequired()]
+    college = StringField("What College Are You In?")
     major = StringField("What Major Are You In?")
     preferred_categories = StringField("What Are Your Preferred Categories?")
     submit = SubmitField("Submit")
