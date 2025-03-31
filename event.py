@@ -1,3 +1,8 @@
+"""
+Event and EventTree data structures used to store, organize, filter, and search
+college event information. Events are inserted into a tree based on the day, college,
+and category of the event.
+"""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
@@ -23,8 +28,8 @@ class Event:
     desc: str
     location: Optional[str]  # Maybe not optional?
     sorting_info: tuple[int, str, str]
-    post_time: int
-    image_src: Optional[str] = None
+    post_time: Optional[int]
+    image: Optional[str] = None
 
     def __init__(self, name: str, desc: str, location: str, sorting_info: tuple[int, str, str],
                  post_time: Optional[int],
@@ -36,7 +41,7 @@ class Event:
         self.post_time = post_time
         self.image = image
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """
             Returns the event's details in a dictionary
         """
@@ -66,10 +71,10 @@ class EventTree:
     """
     # Private Instance Attributes:
     #
-    root: Optional[Event]
+    root: Event
     subtrees: list[EventTree]
 
-    def __init__(self, root: Optional[Event], subtrees: list[EventTree]) -> None:
+    def __init__(self, root: Event, subtrees: list[EventTree]) -> None:
         """Initialize a new Tree with the given root value and subtrees.
 
         If root is None, the tree is empty.
@@ -160,12 +165,13 @@ class EventTree:
 
             return to_list
 
+
 def radix_sort_events(events: list[Event], method: str) -> list[Event]:
     """Sort by time of the event"""
     if not events:
         return []
 
-    timestamps = [event.post_time for event in events]
+    timestamps = [event.sorting_info[0] for event in events]
     max_time = max(timestamps)
 
     exp = 1
@@ -180,18 +186,19 @@ def radix_sort_events(events: list[Event], method: str) -> list[Event]:
 
     return events
 
+
 def _counting_sort_events(events: list[Event], exp: int) -> list[Event]:
     """Counting sort to help radix sort"""
     n = len(events)
-    output = [None]*n
-    count = [0]*10
+    output = [None] * n
+    count = [0] * 10
 
     for event in events:
         index = (event.sorting_info[0] // exp) % 10
         count[index] += 1
 
     for i in range(1, 10):
-        count[i] += count[i-1]
+        count[i] += count[i - 1]
 
     for event in reversed(events):
         index = (event.sorting_info[0] // exp) % 10
@@ -200,7 +207,11 @@ def _counting_sort_events(events: list[Event], exp: int) -> list[Event]:
 
     return output
 
+
 def search_event(events: list[Event], query: str) -> list[Event]:
+    """
+    Goes through each event and return the ones with names matching the query.
+    """
     return [event for event in events if query.lower() in event.name.lower()]
 
 
@@ -208,10 +219,10 @@ def generate_tree() -> EventTree:
     """
         Given a file, create events and put them in a tree
     """
-    tree = EventTree(None, [])
+    tree = EventTree(Event("root", "", "", (0, "", ""), 0, ""), [])
     with open('static/u_of_t_events_original.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
-    for index, event in enumerate(data, start=1):
+    for _, event in enumerate(data, start=1):
         name = event.get('name', '').strip('"')
         desc = event.get('desc', '').strip('"')
         location = event.get('location')
@@ -245,7 +256,7 @@ def add_event_dict(given_list: list, name: str, desc: str, location: Optional[st
 
 
 if __name__ == "__main__":
-    a = EventTree(None, [])
+    a = EventTree("root", "", "", (0, "", ""), 0, "", [])
     a.insert(Event("Eat d", "", "", (1700000000, "UC", "Free Food"), 1700000000, "image_url"))
     a.insert(Event("talk", "", "", (1700000000, "My College", "Social"), 1700000000, "image_url"))
     a.insert(Event("Eat f", "", "", (1700000000, "My College", "Free Food"), 1700000000, "image_url"))
@@ -256,7 +267,7 @@ if __name__ == "__main__":
     b.print_tree()
 
     filtered_list = b.filter_tree(["Monday"])
-    newest_sorted = radix_sort_events(filtered_list, True)
+    newest_sorted = radix_sort_events(filtered_list, "old")
     searched_list = search_event(newest_sorted, "le")
 
     print([x.name for x in searched_list])

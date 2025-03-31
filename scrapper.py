@@ -1,15 +1,24 @@
-import requests
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+"""
+This extracts the event information from each college using a seleium webdriver and bs4.
+The data is interpreted with multiple LLMs
+"""
+
 import time
 from typing import Optional
 import json
 import ast
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import event
 
 
-def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple[int, str, str], posted_time: int, image: Optional[str]) -> None:
+def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple[int, str, str], posted_time: int,
+              image: Optional[str]) -> None:
+    """
+    Adds event to a list of events
+    """
     scraped_events.append({
         "name": name,
         "desc": desc,
@@ -20,7 +29,7 @@ def add_event(name: str, desc: str, location: Optional[str], sorting_info: tuple
     })
 
 
-def call_llm_models(url: str, source: str, college_name: str) -> str:
+def call_llm_models(source: str, college_name: str) -> str:
     """
     Calls multiple LLMs in order: Gemini -> DeepSeek -> Qwen -> Dolphin
     Returns the first successful response.
@@ -52,7 +61,8 @@ HTML Source:
         print("Trying Deepseek ...")
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
-            headers={"Authorization": "Bearer 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"},
+            headers={
+                "Authorization": "Bearer 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"},
             data=json.dumps({
                 "model": "deepseek/deepseek-chat-v3-0324:free",
                 "messages": [{"role": "user", "content": prompts}]
@@ -79,7 +89,8 @@ HTML Source:
         print("Trying Qwen...")
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
-            headers={"Authorization": "Bearer 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"},
+            headers={
+                "Authorization": "Bearer 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"},
             data=json.dumps({
                 "model": "qwen/qwen-qwq-32b:free",
                 "messages": [{"role": "user", "content": prompts}]
@@ -109,7 +120,7 @@ def extract_data(url: str, source: str, college_name: str) -> dict:
     """
     Takes the link of the event, and return a dictionary with extracted information
     """
-    message_content = call_llm_models(url, source, college_name)
+    message_content = call_llm_models(source, college_name)
     content_dict = {}
     content_array = message_content.split("\n")
 
@@ -145,7 +156,7 @@ def scrape(url: str, add_url: str, college_name: str) -> None:
     events = soup.find_all(['div', 'li', 'article', 'a'], class_=[
         'o-listing__list-item', 'm-listing-item--3cols', 'e-loop-item',
         'archive-events', 'news-events-tile',
-        'tribe-events-calendar-month__day--current', 'events-link'
+        'tribe-events-calendar-month__day--current', 'tribe-events-calendar-month__day--past', 'events-link'
     ])
     event_links = []
 
@@ -177,6 +188,7 @@ def scrape(url: str, add_url: str, college_name: str) -> None:
 
 
 if __name__ == "__main__":
+
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)

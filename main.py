@@ -1,12 +1,11 @@
+"""
+The flask frontend for the project. This file handles user interaction, and creates endpoints for the web to access.
+Uses event.py to manage event data structure.
+"""
 import copy
 from datetime import datetime
 
-from charset_normalizer.md import annotations
 from flask import Flask, request, jsonify, render_template
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.fields.choices import SelectMultipleField
-from wtforms.validators import DataRequired
 import json
 import event
 from recommendation import recommend_events
@@ -69,7 +68,6 @@ def ind_event(title):
     for page in app.config["EVENT_LIST_READABLE"]:
         if page.name == title:  # once event is found sets it to the variable
             individual_event = page.to_dict()
-            print("PAGE", individual_event)
             break
 
     # returns and renders a new page
@@ -134,7 +132,6 @@ def update_profile():
         Gets the data from the user form from the html and returns the necessary user information
     """
     data = request.get_json()
-    print(data)
 
     app.config['USER_DATA'] = {
         'college': data.get("college", ""),
@@ -184,7 +181,6 @@ def filter_events(filter_dict: dict) -> list:
         else:
             filtered_events = event.radix_sort_events(filtered_events, sort)
 
-
     return filtered_events
 
 
@@ -195,11 +191,11 @@ def change_time_readability(unix_events: list) -> list:
     unix_event_copy = copy.deepcopy(unix_events)
 
     for normal_event in unix_event_copy:
-        if type(normal_event.sorting_info[0]) is int:
+        if isinstance(normal_event.sorting_info[0], int):
             date = (datetime.fromtimestamp(normal_event.sorting_info[0]).strftime('%A, %b %d, %Y'))
             normal_event.sorting_info = (date, normal_event.sorting_info[1], normal_event.sorting_info[2])
 
-        if normal_event.post_time != 0 and type(normal_event.post_time) is not str:
+        if normal_event.post_time != 0 and not isinstance(normal_event.post_time, str):
             posted_time = datetime.fromtimestamp(normal_event.post_time).strftime('%Y-%m-%d %H:%M:%S')
             normal_event.post_time = posted_time
 
@@ -207,4 +203,5 @@ def change_time_readability(unix_events: list) -> list:
 
 
 if __name__ == "__main__":
+
     app.run(debug=True, port=8080)
