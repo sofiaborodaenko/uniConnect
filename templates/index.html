@@ -1,267 +1,394 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>uniConnect</title>
-        <!--CSS file-->
-        <link rel="stylesheet" href="static/output.css">
-        <link rel="stylesheet" href="static/styles/custom.css">
-    </head>
-    <body>
-        <!--top banner -->
-        <div class="header flex items-center justify-between static">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uniConnect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/custom.css') }}">
+    <link rel="icon" href="static/imgs/uniconnect-logo.png">
 
-            <div class="flex flex-row content-end w-full h-full">  <!--logo_container-->
-               <!-- <img src="static/UofT.png">  -->
-                <img class="basis-[15.6rem] flex-none text-center object-scale-down" src="static/imgs/uniconnect-logo.png" draggable="false">
-                <h1 class="basis-2/3 text-3xl flex-grow place-self-end text-[#ffffff] text-[3.25rem] font-light " draggable="false">uni<span class="font-bold"><a>Connect</a></span></h1>
-                <a class="basis-1/8 flex-auto object-scale-down self-center "><img class="user-pfp w-12 h-17 object-cover justify-self-center " src="static/imgs/user-img.png" draggable="false" onclick="toggleMenu()"></a>
-            <!---->
-            </div>
+</head>
+<body class="font-sans">
+<!--top banner -->
+<div class="header flex border-b-1 border-solid border-gray-200 sticky">
+    <div class="flex items-center w-full h-full px-10" style="padding: 1rem">
+        <div class="flex w-100 items-center">
+            <img class="h-12 w-auto object-contain mr-4"
+                 src="static/imgs/uniconnect-logo.png"
+                 draggable="false"
+                 alt="uniConnect Logo">
 
-            <div class="user-form bg-blue-50 absolute top-full right-1/100 box-border" id="user-form">
-                <div class="p-6 m-6">
-                    <!--{% block user_form %}-->
-
-                    <!--{% endblock %}-->
-
-                    <form method="POST" >
-                        {{ form.hidden_tag() }}
-
-                        {{ form.college.label }}
-                        {{ form.college() }}
-                        <br/>
-                        {{ form.major.label }}
-                        {{ form.major() }}
-                        <br/>
-                        {{ form.preferred_categories.label }}
-                        {{ form.preferred_categories() }}
-                        <br/>
-                        {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded") }}
-                    </form>
-                </div>
-
-            </div>
-
+            <h1 class="select-none text-3xl text-blue-700 font-light text-center" style="padding: 1rem">
+                Uni<span class="text-blue-700 font-bold">Connect</span>
+                <h1 class="text-sm text-blue-700"><sup>TM</sup></h1>
+            </h1>
         </div>
 
-        <div class="tree-container">
-            <div class="tree">
-                {% for item in  events_list %}
-                    {% if item['image'] %}
-                        <div class="node">
-                           <div class="flex">
-                               <img class="event-img" src="{{ item['image'] }}">
+        <div class="flex items-center w-200 ml-4 h-10 p-10">
+                <div class="relative">
+                    <input type="text" id="search-bar" placeholder="Search" style="padding: 1rem"
+                           class="h-10 w-150 rounded-l-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-500">
+                    <button id="search-button" class="absolute right-0 top-0 h-full px-3 text-gray-600 hover:text-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </div>
 
-                               <div class="event-text grid">
-                                    <strong class="event-name">{{ item['name'] }}</strong>
-                                    <p>{{ item['sorting_info'][2]}}</p>
-                                    {% if item['location'] %}
-                                        <p class="event-location">{{ item['location'] }}</p>
-                                    {% endif %}
-
-                                    <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
-
-                                   {% if item['posted_time'] != 0 %}
-                                        <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
-                                    {% endif %}
-                                   <p>{{ item['desc'] }}</p>
-                               </div>
-                            </div>
-
-                        </div>
-
-                    {% else %}
-                        <div class="node">
-                            <strong class="event-name">{{ item['name'] }} </strong>
-                            <p>{{ item['sorting_info'][2]}}</p>
-
-                            {% if item['location'] %}
-                                <p class="event-location">{{ item['location'] }}</p>
-                            {% endif %}
-
-                            <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
-
-                            {% if item['posted_time'] != 0 %}
-                                <p class="event-location">Posted on {{ item['posted_time'] }}</p> </br>
-                            {% endif %}
-                            <p>{{ item['desc'] }}</p>
-                        </div>
-
-                    {% endif %}
-
-
-
-
-
-                {% endfor %}
-
+                <select id="filter-dropdown" class="h-10 py-2 px-4 rounded-r-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ml-0">
+                    <option value="">Sort by</option>
+                    <option value="new">Date: New to Old</option>
+                    <option value="old">Date: Old to New</option>
+                </select>
             </div>
         </div>
 
-            <!--sidebar-->
-            <div class="side-bar">
+        <div class="flex items-center justify-end pl-4">
+            <button onclick="toggleMenu()" class="focus:outline-none">
+                <img class="h-12 w-12 object-cover rounded-full border-2 border-white"
+                     src="static/imgs/user-img.png"
+                     draggable="false"
+                     alt="User Profile">
+            </button>
+        </div>
+    </div>
 
-                <!-- menu items -->
-                <div class="menu">
-                    <div class="item"><a class="sub-btn">Categories</a>
-                        <div class="sub-menu">
-                            <form method="POST" action="/">
-                                <li>Free Food <input type="checkbox" value="Free Food" name="category-checkbox"></li>
-                                <li>Social  <input type="checkbox" value="Social" name="category-checkbox"></li>
-                                <li>Sports  <input type="checkbox" value="Sports" name="category-checkbox"></li>
-                                <li>Academic  <input type="checkbox" value="Academic" name="category-checkbox"></li>
-                                <li>Career  <input type="checkbox" value="Career" name="category-checkbox"></li>
-                                <li>Financial Help  <input type="checkbox" value="Financial Help" name="category-checkbox"></li>
-                                <li>Mental Health  <input type="checkbox" value="Mental Health" name="category-checkbox"></li>
-                                <li>Health  <input type="checkbox" value="Health" name="category-checkbox"></li>
-                                <li>Outdoor Adventure  <input type="checkbox" value="Outdoor Adventure" name="category-checkbox"></li>
+    <div class="user-form bg-blue-50 absolute top-full right-1/100 box-border" id="user-form">
+        {% block user_form %}
+        <div class="p-6 m-6">
 
-                            </form>
 
-                        </div>
+            <form method="POST">
+                {{ form.hidden_tag() }}
 
+                {{ form.college.label }}
+                {{ form.college() }}
+                <br/>
+                {{ form.faculty.label }}
+                {{ form.faculty() }}
+                <br/>
+                {{ form.preferred_categories.label }}
+                {{ form.preferred_categories() }}
+                <br/>
+                {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded") }}
+            </form>
+
+
+        </div>
+        {% endblock %}
+
+    </div>
+
+
+
+{% block body_content %}
+<div class="tree-container">
+    <div class="tree">
+        {% for item in events_list %}
+
+        <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out ">
+            <a href="{{ url_for('ind_event', title=item['name']) }}" class="block hover:no-underline">
+                {% if item['image'] %}
+                <div class="flex">
+                    <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
+                         src="{{ item['image'] }}">
+
+                    <div class="event-text grid">
+                        <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}"
+                                                      class="hover:underline">{{ item['name'] }}</a></strong>
+                        <p class="college-name">{{ item['sorting_info'][2]}}</p>
+
+                        {% if item['post_time'] != 0 %}
+                        <p class="event-posted">Posted on {{ item['post_time'] }}</p>
+                        {% endif %}
+
+                        {% if item['location'] %}
+                        <p class="event-location">{{ item['location'] }}</p>
+                        {% endif %}
+
+                        <p class="event-location">{{ item['sorting_info'][0] }}</p></br>
+
+                        <p class="event-location">{{ item['sorting_info'][1] }} </p> </br>
+
+
+
+                        <p class="event-short-desc">{{ item['desc'] }}</p>
                     </div>
-                    <div class="item"><a class="sub-btn">Days of the Week</a>
-                        <div class="sub-menu">
-                            <form method="POST" action="/">
-                                <li>Monday <input type="checkbox" value="Monday" name="week-checkbox"></li>
-                                <li>Tuesday  <input type="checkbox" value="Tuesday" name="week-checkbox"></li>
-                                <li>Wednesday  <input type="checkbox" value="Wednesday" name="week-checkbox"></li>
-                                <li>Thrusday  <input type="checkbox" value="Thrusday" name="week-checkbox"></li>
-                                <li>Friday  <input type="checkbox" value="Friday" name="week-checkbox"></li>
-                                <li>Saturday  <input type="checkbox" value="Saturday" name="week-checkbox"></li>
-                                <li>Sunday  <input type="checkbox" value="Sunday" name="week-checkbox"></li>
-
-                            </form>
-                        </div>
-
-                    </div>
-                    <div class="item"><a class="sub-btn">Colleges</a>
-                        <div class="sub-menu">
-                            <form method="POST" action="/">
-                                <li>Innis College <input type="checkbox" value="Innis College" name="college-checkbox"></li>
-                                <li>New College  <input type="checkbox" value="New College" name="college-checkbox"></li>
-                                <li>Trinity College <input type="checkbox" value="Trinity College" name="college-checkbox"></li>
-                                <li>University College  <input type="checkbox" value="University College" name="college-checkbox"></li>
-                                <li>Victoria College <input type="checkbox" value="Victoria College" name="college-checkbox"></li>
-                                <li>Woodsworth College <input type="checkbox" value="Woodsworth College" name="college-checkbox"></li>
-
-                            </form>
-                        </div>
-
-                    </div>
-
-                    <form class="">
-                        <button type="submit" name="reset" id="resetFilters" >Reset Filters</button>
-                    </form>
-
                 </div>
+                {% else %}
+                <strong class="event-name"><a href="{{ url_for('ind_event', title=item['name']) }}"
+                                              class="hover:underline">{{ item['name'] }}</a></strong>
+                <p class="college-name">{{ item['sorting_info'][2]}}</p>
 
+                {% if item['post_time'] != 0 %}
+                <p class="event-posted">Posted on {{ item['post_time'] }}</p> </br>
+                {% endif %}
+
+                {% if item['location'] %}
+                <p class="event-location">{{ item['location'] }}</p>
+                {% endif %}
+
+                <p class="event-location">{{ item['sorting_info'][0] }}</p> </br>
+
+                <p class="event-location">{{ item['sorting_info'][1] }} </p> </br>
+
+
+                <p>{{ item['desc'] }}</p>
+                {% endif %}
+            </a>
+        </div>
+
+
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}
+
+<!--sidebar-->
+{% block side_bar %}
+<div class="side-bar h-screen overflow-y-auto sticky top-0 py-4 px-2 bg-white border-r border-gray-200">
+    <!-- menu items -->
+    <form class="sticky top-0 z-10 bg-white pt-4 pb-2 border-b border-gray-200">
+        <button type="submit" name="reset" id="resetFilters" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+            Reset Filters
+        </button>
+    </form>
+
+    <div class="menu select-none" style="padding:1rem">
+        <div class="item">
+            <!-- icons from https://www.flaticon.com/free-icons/week-days -->
+            <a class="flex items-center gap-2 sub-btn hover:bg-gray-100 duration-500 rounded-full font-bold px-4 py-2">
+                <img class="flex-none h-6 w-6 object-fit"
+                     src="static/imgs/category.png"
+                     draggable="false">
+                <span class="flex-1">Categories</span>
+            </a>
+
+            <div class="sub-menu">
+                <form method="POST" action="/">
+                    {% for category in ["Free Food", "Social", "Sports", "Academic", "Career", "Financial Help", "Mental
+                    Health", "Health", "Outdoor Adventure"] %}
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{category}}-checkbox" type="checkbox" value="{{category}}" name="category-checkbox">
+                        <label for="{{category}}-checkbox"
+                               class="ms-2 text-sm font-medium text-gray-900">{{category}}</label>
+                    </li>
+                    {% endfor %}
+                </form>
             </div>
+        </div>
+
+        <div class="item">
+            <a class="flex items-center gap-2 sub-btn hover:bg-gray-100 duration-500 rounded-full font-bold px-4 py-2">
+                <img class="flex-none h-6 w-6 object-fit"
+                     src="static/imgs/7-days.png"
+                     draggable="false">
+                <span class="flex-1">Day</span>
+            </a>
+            <div class="sub-menu">
+                <form method="POST" action="/">
+                    {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{day}}-checkbox" type="checkbox" value="{{day}}" name="week-checkbox">
+                        <label for="{{day}}-checkbox" class="ms-2 text-sm font-medium text-gray-900">{{day}}</label>
+                    </li>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+
+        <div class="item">
+            <a class="flex items-center gap-2 sub-btn hover:bg-gray-100 duration-500 rounded-full font-bold px-4 py-2">
+                <img class="flex-none h-6 w-6 object-fit"
+                     src="static/imgs/school.png"
+                     draggable="false">
+                <span class="flex-1">College</span>
+            </a>
+            <div class="sub-menu">
+                <form method="POST" action="/">
+                    {% for college in ["Innis College", "New College", "Trinity College", "University College",
+                    "Victoria College", "Woodsworth College"] %}
+                    <li class="whitespace-nowrap overflow-hidden"><input id="{{college}}-checkbox" type="checkbox" value="{{college}}" name="college-checkbox">
+                        <label for="{{college}}-checkbox"
+                               class=" ms-2 text-sm font-medium text-gray-900">{{college}}</label>
+                    </li>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
 
 
-        <!-- jquery cdn link -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script>
-            // makes the
-            let userForm = document.getElementById("user-form");
+    </div>
 
-            function toggleMenu(){
-                userForm.classList.toggle("open-form");
-            }
-        </script>
+</div>
+{% endblock %}
 
-        <script>
-            $(document).ready(function(){
-                console.log("jQuery is loaded and script is running!");
-            });
 
-            $('input[type="checkbox"]').change(function(){
-                console.log("Checkbox clicked!");
-            });
-        </script>
+<!-- jquery cdn link -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    // makes the
+    let userForm = document.getElementById("user-form");
 
-        <script>
-            $(document).ready(function(){
+    function toggleMenu(){
+        userForm.classList.toggle("open-form");
+    }
+</script>
 
-                $.getJSON("static/user_selected_filters.json", function(data){
-                    if (data) {
-                        $('input[type="checkbox"]').each(function(){
-                            let checkboxValue = $(this).val();
-                            let checkboxName = $(this).attr("name");
+<script>
+    $(document).ready(function(){
+        console.log("jQuery is loaded and script is running!");
+    });
 
-                            if ((checkboxName == "category-checkbox" && data.categories.includes(checkboxValue)) ||
-                                (checkboxName == "week-checkbox" && data.days.includes(checkboxValue)) ||
-                                (checkboxName == "college-checkbox" && data.colleges.includes(checkboxValue))) {
+    $('input[type="checkbox"]').change(function(){
+        console.log("Checkbox clicked!");
+    });
 
-                                $(this).prop("checked", true);
-                            }
 
-                        });
-                    }
-                });
+</script>
+
+<script>
+     $(document).ready(function(){
+
+
+
+                const userFilters = {{ selected_filters | tojson }};
+
+
+                if (userFilters) {
+                    $('input[type="checkbox"]').each(function(){
+                        let checkboxValue = $(this).val();
+                        let checkboxName = $(this).attr("name");
+
+                        if ((checkboxName == "category-checkbox" && userFilters.categories.includes(checkboxValue)) ||
+                            (checkboxName == "week-checkbox" && userFilters.days.includes(checkboxValue)) ||
+                            (checkboxName == "college-checkbox" && userFilters.colleges.includes(checkboxValue))) {
+
+                            $(this).prop("checked", true);  // Pre-select the checkboxes based on the global dictionary
+                        }
+                    });
+                }
+
 
                 // for toggling the sub-menus
-                $('.sub-btn').click(function(){
-                    $(this).next('.sub-menu').slideToggle();
-                    $(this).find('.dropdown').toggleClass('rotate');
-                });
+                 $('.sub-btn').click(function(){
+            $(this).next('.sub-menu').slideToggle();
+        });
 
-                $('input[type="checkbox"]').change(function(){
-                    let categories = [];
-                    let days = [];
-                    let colleges = [];
+        // search
+        $('#search-button').click(performSearch);
+        $('#search-bar').keypress(function(e){
+            if(e.which == 13) performSearch();
+        });
 
-                    $('input[type="checkbox"]:checked').each(function(){
-                        let value = $(this).val();
-                        let name = $(this).attr("name");
+        // sort
+        $('#filter-dropdown').change(performSort);
 
-                        if (name == "category-checkbox") {
-                            categories.push(value);
-                        } else if (name == "week-checkbox") {
-                            days.push(value);
-                        } else if (name == "college-checkbox") {
-                            colleges.push(value);
-                        }
+        // filter
+        $('input[type="checkbox"]').change(updateFilters);
 
-                    });
+        // reset
+        $("#resetFilters").click(function(e){
+            e.preventDefault();
+            $('input[type="checkbox"]').prop("checked", false);
+            $('#search-bar').val('');
+            $('#filter-dropdown').val('');
+            updateFilters();
+        });
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/update-selection",
-                        data: JSON.stringify({
-                            categories: categories,
-                            days: days,
-                            colleges: colleges
-                        }),
-                        contentType: "application/json",
-                        success: function(response){
-                            console.log("Server Response:", response);
-                            location.reload();
-                        }
-                    });
+        function performSearch() {
+            updateFilters();
+        }
 
-                });
+        function performSort() {
+            updateFilters();
+        }
 
-                $("#resetFilters").click(function(){
-                    $('input[type="checkbox"]').prop("checked", false);
+        function updateFilters() {
+            const filters = {
+                query: $('#search-bar').val().trim(),
+                sort: $('#filter-dropdown').val(),
+                categories: $('input[name="category-checkbox"]:checked').map((i,e) => e.value).get(),
+                days: $('input[name="week-checkbox"]:checked').map((i,e) => e.value).get(),
+                colleges: $('input[name="college-checkbox"]:checked').map((i,e) => e.value).get()
+            };
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/reset-filters",
-                        contentType: "application/json",
-                        success: function(response){
-                            console.log(response.message);
-                         }
-
-                    });
-                });
-
+            $.ajax({
+                type: "POST",
+                url: "/update-selection",
+                data: JSON.stringify(filters),
+                contentType: "application/json",
+                success: function(response){
+                    updateDisplay();
+                }
             });
+        }
 
-        </script>
 
-    </body>
+        function updateDisplay(){
+             $.ajax({
+                        type: "GET",
+                        url: "/get-updated-events",
+                        success: function(data){
+                            console.log("Updated Events:", data);
+
+                            let eventContainer = $(".tree-container .tree");
+                            eventContainer.empty(); // clear existing events
+
+                            // append new events dynamically
+                            data.forEach(function(item){
+                                let eventHtml = `
+                                    <div class="node hover:bg-sky-200 duration-500 hover:text-gray-700 hover:scale-101 ease-in-out">
+                                    <a href="/${encodeURIComponent(item.name)}" class="block hover:no-underline">
+                                        ${item.image ? `
+                                        <div class="flex">
+                                            <img class="event-img h-64 w-64 rounded-sm border-2 border-solid object-cover mr-4"
+                                                src="${item.image}">
+                                            <div class="event-text grid">
+                                                <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                                    class="hover:underline">${item.name}</a></strong>
+                                                <p class="college-name">${item.sorting_info[2]}</p>
+
+                                                ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p>` : ''}
+
+                                                ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
+
+                                                <p class="event-location">${item.sorting_info[0]}</p></br>
+
+                                                <p class="event-location">${item.sorting_info[1]}</p> </br>
+
+                                                <p class="event-short-desc">${item.desc}</p>
+                                            </div>
+                                        </div>` : `
+                                        <strong class="event-name"><a href="/${encodeURIComponent(item.name)}"
+                                            class="hover:underline">${item.name}</a></strong>
+                                        <p class="college-name">${item.sorting_info[2]}</p>
+
+                                        ${item.post_time != 0 ? `<p class="event-posted">Posted on ${item.post_time}</p> </br>` : ''}
+
+                                        ${item.location ? `<p class="event-location">${item.location}</p>` : ''}
+
+                                        <p class="event-location">${item.sorting_info[0]}</p> </br>
+
+                                        <p class="event-location">${item.sorting_info[1]}</p> </br>
+
+                                        <p>${item.desc}</p>
+                                        `}
+                                    </a>
+                                </div>
+
+                                `;
+                                eventContainer.append(eventHtml);
+                            });
+                        }
+                    });
+            }
+
+
+     });
+
+</script>
+
+
+</body>
 </html>
