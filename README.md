@@ -1,2 +1,3 @@
 # uniConnect
-Service for U of T students who are looking for events
+## A Centralized Hub for College Events at UofT
+
